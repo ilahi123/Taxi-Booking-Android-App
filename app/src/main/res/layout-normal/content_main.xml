@@ -1,0 +1,705 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+   xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.tukla.www.tukla.MainActivity"
+    tools:showIn="@layout/app_bar_main">
+
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        map:cameraZoom="12"
+        map:mapType="normal"
+        map:uiCompass="false"
+
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="186dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="0dp"
+
+        android:weightSum="7.0"
+
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.3"
+            android:paddingBottom="5dp"
+
+            >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="0dp"
+                    android:padding="0dp"
+                    app:cardUseCompatPadding="true"
+                    card_view:cardCornerRadius="@dimen/card_corner_radius"
+                    card_view:cardElevation="@dimen/cardview_elevation">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="40dp"
+                        android:layout_marginRight="40dp">
+
+                        <View
+                            android:id="@+id/view"
+                            android:layout_width="match_parent"
+
+                            android:layout_height="0.3dp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="10dp"
+
+                            android:background="#afafaf"/>
+                    </RelativeLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:baselineAligned="false"
+                        android:orientation="vertical">
+
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <com.balysv.materialripple.MaterialRippleLayout
+                                android:id="@+id/ripple1"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:padding="0dp"
+                                app:mrl_rippleColor="#d6d4d4"
+                                app:mrl_rippleDuration="450"
+                                app:mrl_rippleFadeDuration="220"
+                                app:mrl_rippleHover="true"
+
+                                >
+
+                                <Button
+                                    android:id="@+id/myCLocation"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="#00ff0000"
+                                    android:ellipsize="end"
+                                    android:fontFamily="@string/fontFamily"
+                                    android:gravity="left|center_vertical"
+                                    android:maxLines="1"
+
+                                    android:onClick="myLocation"
+                                    android:paddingBottom="5dp"
+                                    android:paddingLeft="@dimen/button_padding1"
+                                    android:paddingTop="5dp"
+                                    android:hint="Your Current Location"
+                                    android:textAlignment="viewStart"
+                                    android:textAllCaps="false"
+                                    android:textColor="@color/colorFont"
+                                    android:textSize="@dimen/nml_dv_txt"
+                                    android:visibility="visible"/>
+
+
+                            </com.balysv.materialripple.MaterialRippleLayout>
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="20dp"
+
+                                >
+
+                                <com.github.vipulasri.timelineview.TimelineView
+                                    android:id="@+id/time_marker"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    app:line="@color/colorPrimary"
+                                    app:linePadding="5dp"
+                                    app:lineSize="1dp"
+
+
+                                    app:markerSize="10dp"/>
+                            </RelativeLayout>
+
+
+                        </RelativeLayout>
+
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+
+                            <com.balysv.materialripple.MaterialRippleLayout
+                                android:id="@+id/ripple1"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:padding="0dp"
+                                app:mrl_rippleColor="#d6d4d4"
+                                app:mrl_rippleDuration="450"
+                                app:mrl_rippleFadeDuration="220"
+                                app:mrl_rippleHover="true"
+
+                                >
+
+                                <Button
+                                    android:id="@+id/myCLocation"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="#00ff0000"
+                                    android:ellipsize="end"
+                                    android:fontFamily="@string/fontFamily"
+                                    android:gravity="left|center_vertical"
+                                    android:maxLines="1"
+                                    android:onClick="myLocation"
+                                    android:paddingBottom="5dp"
+                                    android:paddingLeft="@dimen/button_padding1"
+                                    android:paddingTop="5dp"
+                                    android:hint="Your Drop Off Location"
+                                    android:textAllCaps="false"
+                                    android:textColor="@color/colorFont"
+                                    android:textSize="@dimen/nml_dv_txt"/>
+                            </com.balysv.materialripple.MaterialRippleLayout>
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="20dp"
+
+                                >
+
+                                <com.github.vipulasri.timelineview.TimelineView
+                                    android:id="@+id/time_marker"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    app:line="@color/colorPrimary"
+                                    app:linePadding="5dp"
+                                    app:lineSize="1dp"
+
+                                    app:marker="@color/colorRed"
+                                    app:markerSize="10dp"/>
+                            </RelativeLayout>
+
+                        </RelativeLayout>
+                    </LinearLayout>
+
+
+                </android.support.v7.widget.CardView>
+            </RelativeLayout>
+
+            <!-- <android.support.v7.widget.CardView
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                app:cardUseCompatPadding="true"
+                card_view:cardCornerRadius="4dp"
+                card_view:cardElevation="2dp"
+                android:layout_margin="0dp"
+                android:padding="0dp"
+                >
+
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="8.0"
+                    android:padding="0dp"
+                    >
+
+
+
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="8"
+                        android:orientation="vertical"
+                        android:id="@+id/Container1"
+                        android:padding="0dp"
+                        >
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:layout_marginBottom="0dp"
+                            android:layout_marginTop="0dp"
+                            android:padding="0dp"
+
+                            >
+
+
+
+                            <com.balysv.materialripple.MaterialRippleLayout
+                                android:id="@+id/ripple1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:mrl_rippleColor="#d6d4d4"
+                                app:mrl_rippleHover="true"
+                                app:mrl_rippleFadeDuration="220"
+                                app:mrl_rippleDuration="450"
+                                android:padding="0dp"
+
+                                >
+
+                                <Button
+                                    android:id="@+id/myLocation"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="fill_parent"
+                                    android:fontFamily="@string/fontFamily"
+                                    android:ellipsize="end"
+                                    android:textColor="@color/colorFont"
+                                    android:gravity="left|center_vertical"
+                                    android:maxLines="1"
+                                    android:background="#00ff0000"
+                                    android:text="Cyberia Smart Homes, block A3"
+                                    android:textAllCaps="false"
+                                    android:layout_marginTop="0dp"
+                                    android:paddingTop="5dp"
+                                    android:paddingBottom="5dp"
+                                    android:paddingLeft="@dimen/button_padding1"
+                                    android:textSize="17sp"
+                                    android:onClick="myLocation"
+                                    />
+                            </com.balysv.materialripple.MaterialRippleLayout>
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:layout_marginTop="0dp"
+                            android:layout_marginBottom="0dp"
+                            android:padding="0dp"
+                            >
+                            <com.balysv.materialripple.MaterialRippleLayout
+                                android:id="@+id/ripple"
+                                android:layout_width="fill_parent"
+                                android:layout_height="fill_parent"
+                                app:mrl_rippleColor="#d6d4d4"
+                                app:mrl_rippleHover="true"
+                                app:mrl_rippleFadeDuration="220"
+                                app:mrl_rippleDuration="450"
+                                android:padding="0dp"
+
+                                >
+
+                                <Button
+                                    android:id="@+id/destinationLocation"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="fill_parent"
+                                    android:fontFamily="@string/fontFamily"
+                                    android:ellipsize="end"
+                                    android:gravity="left|center_vertical"
+                                    android:maxLines="1"
+                                    android:textColor="@color/colorFont"
+                                    android:background="#00ff0000"
+                                    android:text="Where you want to go?"
+                                    android:textAllCaps="false"
+                                    android:layout_marginTop="0dp"
+                                    android:paddingLeft="@dimen/button_padding1"
+                                    android:textAlignment="gravity"
+                                    android:onClick="destination"
+
+                                    android:textSize="17sp" />
+                            </com.balysv.materialripple.MaterialRippleLayout>
+                        </LinearLayout>
+
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:paddingLeft="10dp"
+                    android:background="@android:color/transparent"
+                    android:layout_height="match_parent">
+                    <ImageView
+                        android:layout_centerInParent="true"
+
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentLeft="true"
+                        android:background="@drawable/road_location"
+                        android:id="@+id/dot_dot_road"
+
+
+                        />
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/transparent"
+                        android:padding="30dp"
+                        >
+                        <View
+                            android:id="@+id/view"
+                            android:layout_centerVertical="true"
+
+                            android:layout_width="match_parent"
+                            android:layout_marginLeft="10dp"
+                            android:layout_height="0.3dp"
+
+                            android:background="#afafaf"/>
+
+                    </RelativeLayout>
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical"
+                    android:weightSum="2"
+                    android:padding="0dp"
+                    android:background="@android:color/transparent"
+
+                    >
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:padding="0dp"
+                        android:orientation="horizontal"
+                        android:weightSum="8"
+                        android:background="@android:color/transparent"
+
+                        android:baselineAligned="false">
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:paddingLeft="10dp"
+                            android:background="@android:color/transparent"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_marginLeft="2.2dp"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true"
+
+                                android:background="@drawable/location__start" />
+
+
+                        </RelativeLayout>
+
+
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginBottom="0dp"
+                        android:paddingTop="0dp"
+                        android:orientation="horizontal"
+                        android:weightSum="8"
+                        android:padding="0dp"
+                        >
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1"
+
+                            >
+
+                        </LinearLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:paddingLeft="10dp"
+                            android:background="@android:color/transparent"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:background="@drawable/location__end"
+                                android:layout_centerVertical="true"
+                                android:layout_centerInParent="true"
+                                android:layout_alignParentLeft="true"
+
+                                />
+
+
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>-->
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.7">
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5"
+            android:orientation="vertical"
+
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                >
+                <Button
+                    android:id="@+id/book_button"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_gravity="bottom"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="center|center_vertical"
+                    android:text="DROP OFF ME"/>
+            <!-- Bottom Layout-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_above="@id/book_button"
+                android:layout_height="wrap_content">
+
+
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/product_description_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="75dp"
+                    android:padding="4dp"
+                    app:cardUseCompatPadding="true"
+                    card_view:cardCornerRadius="@dimen/card_corner_radius"
+                    card_view:cardElevation="@dimen/cardview_elevation">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginTop="5dp">
+
+
+                        <TextView
+                            android:id="@+id/price_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:text="200.50"
+                            android:textSize="20sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBaseline="@+id/price_text"
+                            android:layout_alignBottom="@+id/price_text"
+                            android:layout_toStartOf="@+id/price_text"
+                            android:text="Rs."
+                            android:textSize="17sp"/>
+                        <!--<TextView
+                            android:layout_below="@id/price_text"
+                            android:layout_alignParentRight="true"
+                            android:layout_width="wrap_content"
+                            android:text="min"
+                            android:textSize="15sp"
+
+                            android:layout_height="wrap_content" />-->
+
+                        <ImageButton
+                            android:id="@+id/img_selected"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/card_border"
+                            android:onClick="img_selected"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/product_type_1"
+                            />
+
+                        <!-- <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/img_selected"
+                            android:id="@+id/product_detail_1"
+                            android:text="Tuk Tuk 3x"
+                            tools:ignore="RelativeOverlap" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1-3 person"
+                            android:layout_below="@id/product_detail_1"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@id/img_selected"
+                            android:id="@+id/product_detail_2"
+                            />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1-3 person"
+                            android:layout_below="@id/product_detail_2"
+                            android:layout_toRightOf="@id/img_selected"
+                            android:id="@+id/product_detail_3"
+
+                            />-->
+
+                    </RelativeLayout>
+
+                </android.support.v7.widget.CardView>
+
+
+                <RelativeLayout
+                    android:id="@+id/products_select_option"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_above="@id/product_description_card"
+                    android:visibility="gone"
+                    >
+
+
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        >
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingBottom="20dp"
+                            android:paddingLeft="20dp"
+                            android:paddingRight="20dp"
+                            android:paddingTop="20dp"
+
+                            >
+
+                            <ImageButton
+                                android:id="@+id/product_type_1_button"
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerVertical="true"
+                                android:adjustViewBounds="true"
+                                android:background="@drawable/card_border"
+                                android:onClick="product_type_1_button"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/product_type_1"/>
+
+                            <TextView
+                                android:id="@+id/product_type_1_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/product_type_1_button"
+                                android:text="Tuk Tuk 3X"/>
+
+                            <TextView
+                                android:id="@+id/product_type_2_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/product_type_1_text"
+                                android:text="Tuk Tuk 3X"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/product_type_2_text"
+                                android:text="Tuk Tuk 3X"/>
+
+                            <ImageButton
+                                android:id="@+id/product_type_2_button"
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:layout_alignParentRight="true"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerVertical="true"
+                                android:adjustViewBounds="true"
+                                android:background="@drawable/card_border"
+                                android:onClick="product_type_2_button"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/product_type_2"
+
+                                />
+
+                            <TextView
+                                android:id="@+id/product_type_2_1_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_below="@id/product_type_2_button"
+                                android:text="Tuk Tuk 3X"/>
+
+                            <TextView
+                                android:id="@+id/product_type_2_2_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_below="@id/product_type_2_1_text"
+                                android:text="Tuk Tuk 3X"/>
+
+                            <TextView
+                                android:id="@+id/product_type_2_3_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_below="@id/product_type_2_2_text"
+                                android:text="Tuk Tuk 3X"/>
+
+                        </RelativeLayout>
+
+                    </android.support.v7.widget.CardView>
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+
+
+
+    </LinearLayout>
+
+
+</FrameLayout>
+

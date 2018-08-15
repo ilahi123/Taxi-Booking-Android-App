@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Tukla</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="fontSize">24sp</string>
+    <string name="fontFamily">Roboto</string>
+    <string name="google_maps_key">AIzaSyBVb_96CF4Caz69KduaF9RWLqUpZyJvW0E</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="formatted_place_data">
+        Name: %1$s\nAddress: %2$s\nPhone: %3$s\nWebsite: %4$s\nRating: %5$s\nId: %6$s\n
+    </string>
+
+
+</resources>

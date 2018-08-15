@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.tukla.www.tukla.LocationAutoActivity"
+                android:focusable="true"
+
+                android:focusableInTouchMode="true"
+                android:background="#f2f2f2"
+
+    >
+   <!-- <include
+        layout="@layout/app_bar_autocomplete"
+        android:id="@+id/appbar_autolocation"
+        />-->
+
+<!--
+
+    <fragment
+        android:id="@+id/place_autocomplete_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+
+        />
+
+-->
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:layout_marginLeft="0dp"
+    android:layout_marginRight="0dp"
+    android:layout_marginTop="0dp"
+
+
+    >
+
+    <android.support.v7.widget.CardView
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="0dp"
+        app:cardElevation="5dp"
+        app:cardMaxElevation="5dp"
+        android:layout_marginTop="-6dp"
+
+        app:cardPreventCornerOverlap="false"
+        app:cardCornerRadius="1dp"
+        app:cardUseCompatPadding="true"
+        android:visibility="visible"
+        app:cardBackgroundColor="@android:color/white"
+        android:id="@+id/cardView">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            >
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight="0.12"
+                android:layout_height="match_parent"
+                android:padding="7dp"
+                android:src="@drawable/ic_menu_black_24dp"
+                android:tint="#017454"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/imageView" />
+
+            <AutoCompleteTextView
+                android:layout_width="0dp"
+                android:layout_weight="0.7"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:hint="Search Location"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:focusableInTouchMode="true"
+                android:focusable="true"
+                android:textColorHint="#808080"
+                android:drawablePadding="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@android:color/transparent"
+                android:id="@+id/location_text"
+                android:nextFocusUp="@id/location_text"
+                android:nextFocusLeft="@id/location_text"
+                android:inputType="text"
+                android:singleLine="true"
+                android:imeOptions="actionDone"
+                android:textAppearance="?android:textAppearanceSmall"
+                />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight="0.13"
+
+                android:layout_height="match_parent"
+                android:padding="7dp"
+
+                android:src="@drawable/location_pin"
+                android:tint="#363636"
+                android:id="@+id/image_right" />
+
+        </LinearLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+
+
+</RelativeLayout>
+
+    <!--RECYCLERVIEW-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/placesRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+        </android.support.v7.widget.RecyclerView>
+
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>
+</RelativeLayout>
+

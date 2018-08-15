@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="0dp"
+
+
+        >
+
+        <android.support.v7.widget.CardView
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="0dp"
+            app:cardElevation="1dp"
+            app:cardMaxElevation="1dp"
+            android:layout_marginTop="0dp"
+
+            app:cardPreventCornerOverlap="false"
+            app:cardCornerRadius="1dp"
+            app:cardUseCompatPadding="true"
+            android:visibility="visible"
+            app:cardBackgroundColor="@android:color/white"
+            android:id="@+id/cardView">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                >
+
+
+
+                <LinearLayout
+                    android:layout_height="match_parent"
+
+                    android:layout_width="0dp"
+                    android:layout_weight="0.12"
+                    android:orientation="vertical"
+                    android:background="@drawable/text_background"
+
+
+                    >
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingBottom="5dp"
+                        android:paddingTop="5dp"
+                        android:gravity="center"
+
+                        >
+
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/place_icon"
+                        android:tint="#5c5c5c"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerInParent="true"
+                        android:id="@+id/imageView" />
+
+                    <TextView
+                        android:id="@+id/distance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10.3KM"
+                        android:textSize="7sp"
+                        android:layout_marginTop="5dp"
+                        android:textStyle="bold"
+                        android:textColor="#515151"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@id/imageView"
+
+
+
+                        />
+
+                    </RelativeLayout>
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.7"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="5dp"
+                    >
+                    <TextView
+                        android:id="@+id/primaryText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:layout_marginBottom="5dp"
+                        android:text="Cyberia Smart Homes,Block A3 kkkkkk"
+                        android:textColor="#303030"
+                        android:maxLines="1"
+                        android:textStyle="bold"
+
+
+                        />
+
+                    <TextView
+                        android:id="@+id/addressDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="13sp"
+                        android:text="Cyberia Smart Homes"
+
+                        />
+
+                </LinearLayout>
+
+
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.13"
+                    android:padding="7dp"
+
+                     >
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/star_before_save"
+                        android:tint="#4e4e4e"
+                        android:id="@+id/image_right"
+                        android:layout_centerInParent="true"
+                        />
+
+                </RelativeLayout>
+
+</LinearLayout>
+
+
+
+
+            </LinearLayout>
+
+            </RelativeLayout>
+
+
+
+
+
+
+
+
+        </android.support.v7.widget.CardView>
+
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>

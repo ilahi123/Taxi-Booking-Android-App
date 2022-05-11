@@ -91,6 +91,85 @@ import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 import static com.tukla.www.tukla.R.id.map;
 import static com.tukla.www.tukla.R.id.myLocation;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Scanner;
+
+import com.mastek.bookingapp.model.Passenger;
+import com.mastek.bookingapp.model.Ticket;
+import com.mastek.bookingapp.model.Train;
+
+
+
+public class BookingApp {
+	
+    public static String date;
+	
+     public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Enter date in format:dd-mm-yyy");
+		String regDate= sc.nextLine();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.ENGLISH);
+		LocalDate date = LocalDate.parse(regDate, formatter);
+		System.out.println(date); // 2010-01-02
+
+		
+		String FromLocation="";
+		String DestLocation="";
+	    String ticketID ="";
+		ArrayList<Passenger> p = new ArrayList <Passenger>();
+		
+		ticketID = ticketBooking (p,FromLocation, DestLocation);
+		
+	}
+		
+	private static String ticketBooking(ArrayList<Passenger> passeger, String FromLocation, String DestLocation)
+	{
+		String ticketId="";
+		double ticketcost =20000; 
+		double discost = 0;
+		ticketcost=getcost(FromLocation,DestLocation);
+		
+		boolean  cntPassenger = chkPassengerCount(passeger);
+		if(cntPassenger == true)
+		{
+			discost = discountOnChildPassenger(passeger,ticketcost);
+			int pCnt = passeger.size();
+			ticketcost = ticketcost *  pCnt;
+			ticketcost  = ticketcost - discost;
+		}	
+		
+		return ticketId;
+	}
+	
+
+	private static double discountOnChildPassenger(ArrayList<Passenger> passeger, double ticketcost) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private static boolean chkPassengerCount(ArrayList<Passenger> passeger)
+	{
+		if(passeger.size() > 5)
+		{
+			return false;
+		}
+
+		return true;
+	}
+	
+	private static int getPrice(String FromLocation, String DestLocation)
+	{		
+		int ticketcost=0;
+		
+		return ticketcost;
+	}
+}
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, LoaderManager.LoaderCallbacks<Object>, GoogleApiClient.ConnectionCallbacks,

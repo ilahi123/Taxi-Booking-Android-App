@@ -171,6 +171,81 @@ public class BookingApp {
 	}
 }
 
+public class booking {
+
+	public static void main(String[] args) {
+		
+		Scanner sc=new Scanner(System.in);
+		
+		Train train=new Train();
+		Ticket ticket=null;
+		 Passenger p=null;
+		 double totalCost=0;
+		
+		  Map<Integer,Passenger> map=new HashMap<Integer,Passenger>(); 
+
+		  Map<Integer,Ticket> Map=new HashMap<Integer,Ticket>(); 
+		   
+	    
+		   System.out.println("Enter How many Passenger are there max=5: ");
+		   Integer passengerCount=sc.nextInt();
+		   
+		  
+		  if(passengerCount<5) {
+			  
+		  int  countID=0;
+		  
+		   while(passengerCount>0 && passengerCount<=5) {
+			   
+			   countID++;
+
+			   System.out.println("Enter Passenger "+countID+" Details.\n");
+			   System.out.println("Enter Passenger Name: ");
+			   String pname=sc.next();
+			   
+			   System.out.println("Enter Passenger Age: ");
+			   Integer age=sc.nextInt();
+			   
+			   System.out.println("Enter Passenger Gender male/female: ");
+			   String gender=sc.next();
+			   
+		   p=new Passenger(pname,age,gender);   
+		   ticket=new Ticket(pname, age, gender);
+		    
+		    //Adding passenger to map   
+		    map.put(countID,p);  
+		    Map.put(countID,ticket);
+		  
+		    passengerCount--;
+		   
+		   }
+		   System.out.println();
+		   System.out.println("Welcome to Railways..");
+		   System.out.println("Ticket ID:"+ticket.ticketId);
+		   System.out.println((train).getDetails());
+		   System.out.println();
+		   
+		   System.out.println("ID"+" Name  "+"Age"+" Gender"+" CostPerPassenger");
+//		    System.out.println();
+		   
+	        for(Map.Entry<Integer, Ticket> entry:map2.entrySet()){    
+		        int key=entry.getKey();  
+		        Ticket b=entry.getValue();  
+		        
+		      totalcost=totalcost+ b.costPerPassenger;
+		        
+		       System.out.println(key+"  "+b.getpname()+"    "+b.getAge()+"  "+b.getGender()
+		      +"   "+ b.costPerPassenger);
+		   } 
+		  }
+		 else {
+		System.out.println("Only 5 passengers allowed on 1 Ticket.Please try again..");
+		 }
+	 System.out.println("Total Cost=\n"+totalCost);
+		}  
+	
+
+}
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, LoaderManager.LoaderCallbacks<Object>, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,

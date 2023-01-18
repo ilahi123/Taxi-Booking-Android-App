@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "969539426665",
+    "firebase_url": "https://easytrayk-374601-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "easytrayk-374601",
+    "storage_bucket": "easytrayk-374601.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:969539426665:android:f817bae3b5c2adb5e205f8",
+        "android_client_info": {
+          "package_name": "com.bb.www.easyTrayk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "969539426665-ve047c7i8f7ulp830i4tepovvjk8sa7e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzTlwjyyals-v1EvBjAQnMMmXe7tejJSU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "969539426665-ve047c7i8f7ulp830i4tepovvjk8sa7e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:969539426665:android:e6d9d308c9624ad4e205f8",
+        "android_client_info": {
+          "package_name": "com.example.chacha.easyTrayk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "969539426665-ve047c7i8f7ulp830i4tepovvjk8sa7e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzTlwjyyals-v1EvBjAQnMMmXe7tejJSU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "969539426665-ve047c7i8f7ulp830i4tepovvjk8sa7e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:969539426665:android:05713af8f54fa23be205f8",
+        "android_client_info": {
+          "package_name": "com.example.chacha.itaxi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "969539426665-ve047c7i8f7ulp830i4tepovvjk8sa7e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzTlwjyyals-v1EvBjAQnMMmXe7tejJSU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "969539426665-ve047c7i8f7ulp830i4tepovvjk8sa7e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

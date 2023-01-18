@@ -100,13 +100,12 @@
                 android:textAppearance="?android:textAppearanceSmall"
                 />
 
-            <ImageView
+            <ImageButton
                 android:layout_width="0dp"
                 android:layout_weight="0.13"
-
                 android:layout_height="match_parent"
                 android:padding="7dp"
-
+                android:onClick="setItems"
                 android:src="@drawable/location_pin"
                 android:tint="#363636"
                 android:id="@+id/image_right" />

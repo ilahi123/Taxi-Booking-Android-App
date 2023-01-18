@@ -162,23 +162,36 @@
 
                                 >
 
-                                <Button
-                                    android:id="@+id/myCLocation"
+<!--                                <Button-->
+<!--                                    android:id="@+id/dropoffLocation"-->
+<!--                                    android:layout_width="match_parent"-->
+<!--                                    android:layout_height="match_parent"-->
+<!--                                    android:background="#00ff0000"-->
+<!--                                    android:ellipsize="end"-->
+<!--                                    android:fontFamily="@string/fontFamily"-->
+<!--                                    android:gravity="left|center_vertical"-->
+<!--                                    android:maxLines="1"-->
+<!--                                    android:onClick="myLocation"-->
+<!--                                    android:paddingBottom="5dp"-->
+<!--                                    android:paddingLeft="@dimen/button_padding1"-->
+<!--                                    android:paddingTop="5dp"-->
+<!--                                    android:hint="Your Drop Off Location"-->
+<!--                                    android:textAllCaps="false"-->
+<!--                                    android:textColor="@color/colorFont"-->
+<!--                                    android:textSize="@dimen/nml_dv_txt"/>-->
+
+                                <EditText
+                                    android:id="@+id/txt_dropoff"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:background="#00ff0000"
-                                    android:ellipsize="end"
                                     android:fontFamily="@string/fontFamily"
-                                    android:gravity="left|center_vertical"
-                                    android:maxLines="1"
-                                    android:onClick="myLocation"
                                     android:paddingBottom="5dp"
+                                    android:gravity="left|center_vertical"
                                     android:paddingLeft="@dimen/button_padding1"
-                                    android:paddingTop="5dp"
                                     android:hint="Your Drop Off Location"
-                                    android:textAllCaps="false"
                                     android:textColor="@color/colorFont"
-                                    android:textSize="@dimen/nml_dv_txt"/>
+                                    android:textSize="@dimen/nml_dv_txt"
+                                    />
                             </com.balysv.materialripple.MaterialRippleLayout>
 
                             <RelativeLayout
@@ -489,7 +502,7 @@
                     android:layout_gravity="bottom"
                     android:layout_alignParentBottom="true"
                     android:gravity="center|center_vertical"
-                    android:text="DROP OFF ME"/>
+                    android:text="@string/button_text"/>
             <!-- Bottom Layout-->
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -522,9 +535,9 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:text="200.50"
+                            android:text="0.00"
                             android:textSize="20sp"
-                            android:textStyle="bold"/>
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -532,8 +545,8 @@
                             android:layout_alignBaseline="@+id/price_text"
                             android:layout_alignBottom="@+id/price_text"
                             android:layout_toStartOf="@+id/price_text"
-                            android:text="Rs."
-                            android:textSize="17sp"/>
+                            android:text="@string/text_currency"
+                            android:textSize="17sp" />
                         <!--<TextView
                             android:layout_below="@id/price_text"
                             android:layout_alignParentRight="true"
@@ -543,18 +556,26 @@
 
                             android:layout_height="wrap_content" />-->
 
-                        <ImageButton
-                            android:id="@+id/img_selected"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:layout_alignParentStart="true"
+<!--                        <ImageButton-->
+<!--                            android:id="@+id/img_selected"-->
+<!--                            android:layout_width="50dp"-->
+<!--                            android:layout_height="50dp"-->
+<!--                            android:layout_alignParentStart="true"-->
+<!--                            android:layout_centerVertical="true"-->
+<!--                            android:adjustViewBounds="true"-->
+<!--                            android:background="@drawable/card_border"-->
+<!--                            android:onClick="img_selected"-->
+<!--                            android:scaleType="centerCrop"-->
+<!--                            android:src="@drawable/product_type_1" />-->
+                        <TextView
+                            android:id="@+id/distance_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
                             android:layout_centerVertical="true"
-                            android:adjustViewBounds="true"
-                            android:background="@drawable/card_border"
-                            android:onClick="img_selected"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/product_type_1"
-                            />
+                            android:text="0 km"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
 
                         <!-- <TextView
                             android:layout_width="wrap_content"

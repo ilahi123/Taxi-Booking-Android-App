@@ -10,10 +10,12 @@ import android.content.IntentSender;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -27,6 +29,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
+import android.util.JsonReader;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -38,19 +41,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.identity.intents.Address;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
@@ -82,6 +92,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -92,6 +107,11 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 import static com.tukla.www.tukla.R.id.map;
 import static com.tukla.www.tukla.R.id.myLocation;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Text;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, LoaderManager.LoaderCallbacks<Object>, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -100,7 +120,7 @@ public class MainActivity extends AppCompatActivity
 
 
     RelativeLayout products_select_option;
-    ImageButton select_btn, product1, product2;
+    ImageButton product1, product2;
     Button myCurrentloc,book_button;
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -121,7 +141,9 @@ public class MainActivity extends AppCompatActivity
 
     Geocoder geocoder;
     List<android.location.Address> addresses;
-
+    EditText txtDropOff;
+    TextView priceText;
+    TextView distanceText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,13 +184,17 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById( R.id.nav_view );
         navigationView.setNavigationItemSelectedListener( this );
 
-
+        /** **/
+        txtDropOff = (EditText) findViewById(R.id.txt_dropoff);
+        //
         //Buttons Select Product option
-        select_btn = (ImageButton) findViewById( R.id.img_selected );
+        //select_btn = (ImageButton) findViewById( R.id.img_selected );
         product1 = (ImageButton) findViewById( R.id.product_type_1_button );
         product2 = (ImageButton) findViewById( R.id.product_type_2_button );
         products_select_option = (RelativeLayout) findViewById( R.id.products_select_option );
         myCurrentloc=(Button) findViewById( R.id.myCLocation );
+        priceText = (TextView) findViewById(R.id.price_text);
+        distanceText = (TextView) findViewById(R.id.distance_text);
 
         book_button=(Button)findViewById(R.id.book_button);
         book_button.setOnClickListener(new View.OnClickListener() {
@@ -176,8 +202,72 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                Intent i = new Intent(getApplicationContext(),FindDriver.class);
-                startActivity(i);
+                //Intent i = new Intent(getApplicationContext(),FindDriver.class);
+                //startActivity(i);
+                Address destinationResult = setDestination(txtDropOff.getText().toString());
+                if(destinationResult!=null) {
+                    String myDestination = destinationResult.getAddressLine(0);
+                    txtDropOff.setText(myDestination);
+                    LatLng myPosition = new LatLng(MainActivity.this.latitude,MainActivity.this.longitude);
+                    LatLng positionUpdate = new LatLng( destinationResult.getLatitude(), destinationResult.getLongitude() );
+                    String directionUrl = getDirectionsUrl(myPosition,positionUpdate);
+
+                    //AsyncDirectionsAPI asyncDirectionsAPI = new AsyncDirectionsAPI();
+                    //asyncDirectionsAPI.execute(directionUrl);
+
+                    //double distanceVal = 2;
+                    // creating a new variable for our request queue
+                    RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+
+                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, directionUrl, null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                double distanceVal = 0;
+                                // now we get our response from API in json object format.
+                                // in below line we are extracting a string with its key
+                                // value from our json object.
+                                // similarly we are extracting all the strings from our json object.
+
+                                JSONArray routesObjArray = response.getJSONArray("routes");
+                                JSONObject distanceObj = routesObjArray.getJSONObject(0);
+
+                                JSONArray c = distanceObj.getJSONArray("legs");
+                                for (int i = 0 ; i < distanceObj.length(); i++) {
+                                    JSONObject obj = c.getJSONObject(i);
+                                    JSONObject distanceFinal =  obj.getJSONObject("distance");
+                                    distanceVal = distanceFinal.getDouble("value");
+                                    break;
+                                }
+
+                                displayFare(distanceVal);
+                            } catch (JSONException e) {
+                                // if we do not extract data from json object properly.
+                                // below line of code is use to handle json exception
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        // this is the error listener method which
+                        // we will call if we get any error from API.
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // below line is use to display a toast message along with our error.
+                            Toast.makeText(MainActivity.this, "Fail to get data..", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    // at last we are adding our json
+                    // object request to our request
+                    // queue to fetch all the json data.
+                    queue.add(jsonObjectRequest);
+
+
+                    mMap.addMarker(new MarkerOptions().position(positionUpdate)
+                            .title("Destination"));
+
+                    CameraUpdate update = CameraUpdateFactory.newLatLngZoom( positionUpdate, 15 );
+                    mMap.animateCamera(update);
+                }
             }
         });
 
@@ -507,8 +597,8 @@ public class MainActivity extends AppCompatActivity
                        // str.append( zipcode ).append( "" );
 
                         myCurrentloc.setText(str);
-                        Toast.makeText(getApplicationContext(), str,
-                                Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext(), str,
+//                                Toast.LENGTH_SHORT).show();
 
                     } else {
                     /*    Toast.makeText(getApplicationContext(),
@@ -759,6 +849,54 @@ public class MainActivity extends AppCompatActivity
         alert.show();
     }
 
+    private Address setDestination(String paramLocString) {
+        List<Address> addressList = null;
 
+        try {
+            addressList = geocoder.getFromLocationName(paramLocString,1);
+            return addressList.get(0);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private String getDirectionsUrl(LatLng origin, LatLng dest) {
+        // Origin of route
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+
+        // Destination of route
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+
+        // Sensor enabled
+        String sensor = "sensor=false";
+
+        // Building the parameters to the web service
+        String parameters = str_origin + "&" + str_dest + "&" + sensor + "&key=AIzaSyBJfB6BWBgpsU-_EBtsZ3SiuYUDhz0sJJE";
+
+        // Output format
+        String output = "json";
+
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
+        return url;
+    }
+
+    private String displayFare(double distance) {
+        String returnText = "";
+        double distanceKm = distance/1000;
+        if(distanceKm<3) {
+            returnText = "60.00";
+        } else {
+            int extraDistance = (int) (distanceKm - 2);
+            returnText = ((extraDistance*8)+60)+".00";
+        }
+
+        distanceText.setText(distanceKm+" km");
+        priceText.setText(returnText);
+        Log.d("PRICE DISPLAY",returnText);
+        return returnText;
+    }
 
 }

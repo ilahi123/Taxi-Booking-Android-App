@@ -41,7 +41,7 @@
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Mujahith Ilahi"
+                android:text="My Info"
                 android:textSize="24sp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
@@ -49,7 +49,7 @@
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="info.mujahithilahi@gmail.com" />
+                android:text="test@test.com" />
 
 
 

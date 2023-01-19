@@ -5,7 +5,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="fontSize">24sp</string>
     <string name="fontFamily">Roboto</string>
-<!--    <string name="google_maps_key">AIzaSyBVb_96CF4Caz69KduaF9RWLqUpZyJvW0E</string>-->
+    <!--    <string name="google_maps_key">AIzaSyBVb_96CF4Caz69KduaF9RWLqUpZyJvW0E</string>-->
     <string name="google_maps_key">AIzaSyBJfB6BWBgpsU-_EBtsZ3SiuYUDhz0sJJE</string>
     <string name="action_settings">Settings</string>
     <string name="formatted_place_data">
@@ -13,4 +13,13 @@
     </string>
     <string name="button_text">Book</string>
     <string name="text_currency">Php </string>
+    <string name="title_activity_sign_up">SignUp</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>

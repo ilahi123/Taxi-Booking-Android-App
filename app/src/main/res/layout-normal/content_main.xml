@@ -86,8 +86,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
 
-                            <com.balysv.materialripple.MaterialRippleLayout
-                                android:id="@+id/ripple1"
+                            <RelativeLayout
+                                android:id="@+id/ripple2"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:padding="0dp"
@@ -120,7 +120,7 @@
                                     android:visibility="visible"/>
 
 
-                            </com.balysv.materialripple.MaterialRippleLayout>
+                            </RelativeLayout>
 
                             <RelativeLayout
                                 android:layout_width="wrap_content"
@@ -150,7 +150,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
 
-                            <com.balysv.materialripple.MaterialRippleLayout
+                            <RelativeLayout
                                 android:id="@+id/ripple1"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
@@ -192,7 +192,7 @@
                                     android:textColor="@color/colorFont"
                                     android:textSize="@dimen/nml_dv_txt"
                                     />
-                            </com.balysv.materialripple.MaterialRippleLayout>
+                            </RelativeLayout>
 
                             <RelativeLayout
                                 android:layout_width="wrap_content"
@@ -202,7 +202,6 @@
                                 >
 
                                 <com.github.vipulasri.timelineview.TimelineView
-                                    android:id="@+id/time_marker"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     app:line="@color/colorPrimary"

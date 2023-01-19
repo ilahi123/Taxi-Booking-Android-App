@@ -106,7 +106,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
-                            <com.balysv.materialripple.MaterialRippleLayout
+                            <RelativeLayout
                                 android:id="@+id/ripple1"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
@@ -140,7 +140,7 @@
                                     android:visibility="visible" />
 
 
-                            </com.balysv.materialripple.MaterialRippleLayout>
+                            </RelativeLayout>
 
                             <ImageView
                                 android:layout_margin="11dp"
@@ -164,8 +164,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
 
-                            <com.balysv.materialripple.MaterialRippleLayout
-                                android:id="@+id/ripple1"
+                            <RelativeLayout
+                                android:id="@+id/ripple2"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 app:mrl_rippleColor="#d6d4d4"
@@ -177,7 +177,7 @@
                                 >
 
                                 <Button
-                                    android:id="@+id/myLocation"
+                                    android:id="@+id/destLocation"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:background="#00ff0000"
@@ -194,7 +194,7 @@
                                     android:textAllCaps="false"
                                     android:textColor="@color/colorFont"
                                     android:textSize="@dimen/nml_dv_txt" />
-                            </com.balysv.materialripple.MaterialRippleLayout>
+                            </RelativeLayout>
 
                             <ImageView
                                 android:layout_width="24dp"

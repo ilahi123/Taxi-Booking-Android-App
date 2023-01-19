@@ -3,13 +3,20 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout-large/content_main.xml" value="0.1" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout-normal/content_main.xml" value="0.25" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/activity_find_driver.xml" value="0.10052083333333334" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/activity_main.xml" value="0.10052083333333334" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/activity_sign_up.xml" value="0.2" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/app_bar_autocomplete.xml" value="0.10052083333333334" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/app_bar_main.xml" value="0.10052083333333334" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/content_main.xml" value="0.17831813576494426" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/content_sign_up.xml" value="0.1793478260869565" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/fragment_first.xml" value="0.1793478260869565" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/fragment_second.xml" value="0.1793478260869565" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/nav_header_main.xml" value="0.1" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/place_autocomplete_adapter.xml" value="0.24954710144927536" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/place_search.xml" value="0.1" />
       </map>
     </option>
   </component>

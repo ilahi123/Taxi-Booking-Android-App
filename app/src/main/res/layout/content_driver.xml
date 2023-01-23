@@ -6,10 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:map="http://schemas.android.com/apk/res-auto"
-   xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.tukla.www.tukla.MainActivity"
-    tools:showIn="@layout/app_bar_main">
+    tools:context=".DriverActivity"
+    tools:showIn="@layout/app_bar_driver">
 
 
     <fragment
@@ -25,11 +25,12 @@
         tools:layout_editor_absoluteY="186dp" />
 
     <LinearLayout
+        android:id="@+id/layoutDetails"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingBottom="0dp"
-
+        android:visibility="gone"
         android:weightSum="7.0"
 
         >
@@ -98,27 +99,26 @@
 
                                 >
 
-                                <Button
-                                    android:id="@+id/myCLocation"
+                                <TextView
+                                    android:id="@+id/txt_origin"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:background="#00ff0000"
                                     android:ellipsize="end"
                                     android:fontFamily="@string/fontFamily"
                                     android:gravity="left|center_vertical"
-                                    android:maxLines="1"
+                                    android:hint="Your Current Location"
 
+                                    android:maxLines="1"
                                     android:onClick="myLocation"
-                                    android:paddingBottom="5dp"
                                     android:paddingLeft="@dimen/button_padding1"
                                     android:paddingTop="5dp"
-                                    android:hint="Your Current Location"
+                                    android:paddingBottom="5dp"
                                     android:textAlignment="viewStart"
                                     android:textAllCaps="false"
                                     android:textColor="@color/colorFont"
                                     android:textSize="@dimen/nml_dv_txt"
-                                    android:visibility="visible"/>
-
+                                    android:visibility="visible" />
 
                             </RelativeLayout>
 
@@ -162,25 +162,25 @@
 
                                 >
 
-<!--                                <Button-->
-<!--                                    android:id="@+id/dropoffLocation"-->
-<!--                                    android:layout_width="match_parent"-->
-<!--                                    android:layout_height="match_parent"-->
-<!--                                    android:background="#00ff0000"-->
-<!--                                    android:ellipsize="end"-->
-<!--                                    android:fontFamily="@string/fontFamily"-->
-<!--                                    android:gravity="left|center_vertical"-->
-<!--                                    android:maxLines="1"-->
-<!--                                    android:onClick="myLocation"-->
-<!--                                    android:paddingBottom="5dp"-->
-<!--                                    android:paddingLeft="@dimen/button_padding1"-->
-<!--                                    android:paddingTop="5dp"-->
-<!--                                    android:hint="Your Drop Off Location"-->
-<!--                                    android:textAllCaps="false"-->
-<!--                                    android:textColor="@color/colorFont"-->
-<!--                                    android:textSize="@dimen/nml_dv_txt"/>-->
+                                <!--                                <Button-->
+                                <!--                                    android:id="@+id/dropoffLocation"-->
+                                <!--                                    android:layout_width="match_parent"-->
+                                <!--                                    android:layout_height="match_parent"-->
+                                <!--                                    android:background="#00ff0000"-->
+                                <!--                                    android:ellipsize="end"-->
+                                <!--                                    android:fontFamily="@string/fontFamily"-->
+                                <!--                                    android:gravity="left|center_vertical"-->
+                                <!--                                    android:maxLines="1"-->
+                                <!--                                    android:onClick="myLocation"-->
+                                <!--                                    android:paddingBottom="5dp"-->
+                                <!--                                    android:paddingLeft="@dimen/button_padding1"-->
+                                <!--                                    android:paddingTop="5dp"-->
+                                <!--                                    android:hint="Your Drop Off Location"-->
+                                <!--                                    android:textAllCaps="false"-->
+                                <!--                                    android:textColor="@color/colorFont"-->
+                                <!--                                    android:textSize="@dimen/nml_dv_txt"/>-->
 
-                                <EditText
+                                <TextView
                                     android:id="@+id/txt_dropoff"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
@@ -191,7 +191,6 @@
                                     android:paddingBottom="5dp"
                                     android:textColor="@color/colorFont"
                                     android:textSize="@dimen/nml_dv_txt" />
-
                             </RelativeLayout>
 
                             <RelativeLayout
@@ -471,114 +470,16 @@
 
 
         </LinearLayout>
-
-        <android.support.v7.widget.CardView
-
-            android:layout_below="@+id/txt_dropoff"
-            android:id="@+id/driver_info"
+        <Button
+            android:id="@+id/accept_button"
+            android:layout_alignBottom="@+id/layoutText"
             android:layout_width="match_parent"
-            android:layout_height="75dp"
-            android:padding="4dp"
-            app:cardUseCompatPadding="true"
-            card_view:cardCornerRadius="@dimen/card_corner_radius"
-            card_view:cardElevation="@dimen/cardview_elevation"
-            android:visibility="gone">
+            android:layout_height="wrap_content"
+            android:text="@string/driver_accept"
+            android:background="@color/green"
+            android:textColor="@color/white">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginBottom="5dp">
-
-
-                <TextView
-                    android:id="@+id/platenumber_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:text=""
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/platenumber_text"
-                    android:layout_alignBottom="@+id/platenumber_text"
-                    android:layout_toStartOf="@+id/platenumber_text"
-                    android:text=""
-                    android:textSize="17sp" />
-                <!--<TextView
-                    android:layout_below="@id/price_text"
-                    android:layout_alignParentRight="true"
-                    android:layout_width="wrap_content"
-                    android:text="min"
-                    android:textSize="15sp"
-
-                    android:layout_height="wrap_content" />-->
-
-                <!--                        <ImageButton-->
-                <!--                            android:id="@+id/img_selected"-->
-                <!--                            android:layout_width="50dp"-->
-                <!--                            android:layout_height="50dp"-->
-                <!--                            android:layout_alignParentStart="true"-->
-                <!--                            android:layout_centerVertical="true"-->
-                <!--                            android:adjustViewBounds="true"-->
-                <!--                            android:background="@drawable/card_border"-->
-                <!--                            android:onClick="img_selected"-->
-                <!--                            android:scaleType="centerCrop"-->
-                <!--                            android:src="@drawable/product_type_1" />-->
-                <TextView
-                    android:id="@+id/drivername_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:text="Looking for Driver..."
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/drivername_text"
-                    android:layout_alignBottom="@+id/drivername_text"
-                    android:layout_toEndOf="@+id/drivername_text"
-                    android:text=""
-                    android:textSize="17sp" />
-
-                <!-- <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/img_selected"
-                    android:id="@+id/product_detail_1"
-                    android:text="Tuk Tuk 3x"
-                    tools:ignore="RelativeOverlap" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1-3 person"
-                    android:layout_below="@id/product_detail_1"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@id/img_selected"
-                    android:id="@+id/product_detail_2"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1-3 person"
-                    android:layout_below="@id/product_detail_2"
-                    android:layout_toRightOf="@id/img_selected"
-                    android:id="@+id/product_detail_3"
-
-                    />-->
-
-            </RelativeLayout>
-
-        </android.support.v7.widget.CardView>
+        </Button>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -603,228 +504,229 @@
 
                 <Button
                     android:id="@+id/book_button"
-                    android:background="@color/green"
-                    android:textColor="@color/white"
+                    style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:layout_alignParentBottom="true"
                     android:layout_gravity="bottom"
+                    android:background="@color/colorRed"
                     android:gravity="center|center_vertical"
-                    android:text="@string/button_text" />
-            <!-- Bottom Layout-->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_above="@id/book_button"
-                android:layout_height="wrap_content">
-
-
-                <android.support.v7.widget.CardView
-                    android:id="@+id/product_description_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="75dp"
-                    android:padding="4dp"
-                    app:cardUseCompatPadding="true"
-                    card_view:cardCornerRadius="@dimen/card_corner_radius"
-                    card_view:cardElevation="@dimen/cardview_elevation">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginRight="30dp"
-                        android:layout_marginBottom="5dp">
-
-
-                        <TextView
-                            android:id="@+id/price_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:text="0.00"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignBaseline="@+id/price_text"
-                            android:layout_alignBottom="@+id/price_text"
-                            android:layout_toStartOf="@+id/price_text"
-                            android:text="@string/text_currency"
-                            android:textSize="17sp" />
-                        <!--<TextView
-                            android:layout_below="@id/price_text"
-                            android:layout_alignParentRight="true"
-                            android:layout_width="wrap_content"
-                            android:text="min"
-                            android:textSize="15sp"
-
-                            android:layout_height="wrap_content" />-->
-
-                        <!--                        <ImageButton-->
-                        <!--                            android:id="@+id/img_selected"-->
-                        <!--                            android:layout_width="50dp"-->
-                        <!--                            android:layout_height="50dp"-->
-                        <!--                            android:layout_alignParentStart="true"-->
-                        <!--                            android:layout_centerVertical="true"-->
-                        <!--                            android:adjustViewBounds="true"-->
-                        <!--                            android:background="@drawable/card_border"-->
-                        <!--                            android:onClick="img_selected"-->
-                        <!--                            android:scaleType="centerCrop"-->
-                        <!--                            android:src="@drawable/product_type_1" />-->
-                        <TextView
-                            android:id="@+id/distance_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_centerVertical="true"
-                            android:text="0"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignBaseline="@+id/distance_text"
-                            android:layout_alignBottom="@+id/distance_text"
-                            android:layout_toEndOf="@+id/distance_text"
-                            android:text="@string/text_km"
-                            android:textSize="17sp" />
-
-                        <!-- <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_toRightOf="@id/img_selected"
-                            android:id="@+id/product_detail_1"
-                            android:text="Tuk Tuk 3x"
-                            tools:ignore="RelativeOverlap" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1-3 person"
-                            android:layout_below="@id/product_detail_1"
-                            android:layout_centerVertical="true"
-                            android:layout_toRightOf="@id/img_selected"
-                            android:id="@+id/product_detail_2"
-                            />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1-3 person"
-                            android:layout_below="@id/product_detail_2"
-                            android:layout_toRightOf="@id/img_selected"
-                            android:id="@+id/product_detail_3"
-
-                            />-->
-
-                    </RelativeLayout>
-
-                </android.support.v7.widget.CardView>
-
-
+                    android:text="@string/driver_button" />
+                <!-- Bottom Layout-->
                 <RelativeLayout
-                    android:id="@+id/products_select_option"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_above="@id/product_description_card"
-                    android:visibility="gone"
-                    >
+                    android:layout_above="@id/book_button"
+                    android:layout_height="wrap_content">
+
 
 
                     <android.support.v7.widget.CardView
+                        android:id="@+id/product_description_card"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        >
+                        android:layout_height="75dp"
+                        android:padding="4dp"
+                        app:cardUseCompatPadding="true"
+                        card_view:cardCornerRadius="@dimen/card_corner_radius"
+                        card_view:cardElevation="@dimen/cardview_elevation">
 
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:paddingBottom="20dp"
-                            android:paddingLeft="20dp"
-                            android:paddingRight="20dp"
-                            android:paddingTop="20dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginRight="30dp"
+                            android:layout_marginTop="5dp">
 
-                            >
-
-                            <ImageButton
-                                android:id="@+id/product_type_1_button"
-                                android:layout_width="80dp"
-                                android:layout_height="80dp"
-                                android:layout_alignParentTop="true"
-                                android:layout_centerVertical="true"
-                                android:adjustViewBounds="true"
-                                android:background="@drawable/card_border"
-                                android:onClick="product_type_1_button"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/product_type_1"/>
 
                             <TextView
-                                android:id="@+id/product_type_1_text"
+                                android:id="@+id/price_text"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_below="@id/product_type_1_button"
-                                android:text="Tuk Tuk 3X"/>
-
-                            <TextView
-                                android:id="@+id/product_type_2_text"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@id/product_type_1_text"
-                                android:text="Tuk Tuk 3X"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@id/product_type_2_text"
-                                android:text="Tuk Tuk 3X"/>
-
-                            <ImageButton
-                                android:id="@+id/product_type_2_button"
-                                android:layout_width="80dp"
-                                android:layout_height="80dp"
                                 android:layout_alignParentRight="true"
-                                android:layout_alignParentTop="true"
                                 android:layout_centerVertical="true"
-                                android:adjustViewBounds="true"
-                                android:background="@drawable/card_border"
-                                android:onClick="product_type_2_button"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/product_type_2"
+                                android:text="0.00"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
 
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignBaseline="@+id/price_text"
+                                android:layout_alignBottom="@+id/price_text"
+                                android:layout_toStartOf="@+id/price_text"
+                                android:text="@string/text_currency"
+                                android:textSize="17sp" />
+                            <!--<TextView
+                                android:layout_below="@id/price_text"
+                                android:layout_alignParentRight="true"
+                                android:layout_width="wrap_content"
+                                android:text="min"
+                                android:textSize="15sp"
+
+                                android:layout_height="wrap_content" />-->
+
+                            <!--                        <ImageButton-->
+                            <!--                            android:id="@+id/img_selected"-->
+                            <!--                            android:layout_width="50dp"-->
+                            <!--                            android:layout_height="50dp"-->
+                            <!--                            android:layout_alignParentStart="true"-->
+                            <!--                            android:layout_centerVertical="true"-->
+                            <!--                            android:adjustViewBounds="true"-->
+                            <!--                            android:background="@drawable/card_border"-->
+                            <!--                            android:onClick="img_selected"-->
+                            <!--                            android:scaleType="centerCrop"-->
+                            <!--                            android:src="@drawable/product_type_1" />-->
+                            <TextView
+                                android:id="@+id/distance_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true"
+                                android:text="0"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignBaseline="@+id/distance_text"
+                                android:layout_alignBottom="@+id/distance_text"
+                                android:layout_toEndOf="@+id/distance_text"
+                                android:text="@string/text_km"
+                                android:textSize="17sp" />
+
+                            <!-- <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_toRightOf="@id/img_selected"
+                                android:id="@+id/product_detail_1"
+                                android:text="Tuk Tuk 3x"
+                                tools:ignore="RelativeOverlap" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1-3 person"
+                                android:layout_below="@id/product_detail_1"
+                                android:layout_centerVertical="true"
+                                android:layout_toRightOf="@id/img_selected"
+                                android:id="@+id/product_detail_2"
                                 />
-
                             <TextView
-                                android:id="@+id/product_type_2_1_text"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
-                                android:layout_below="@id/product_type_2_button"
-                                android:text="Tuk Tuk 3X"/>
+                                android:text="1-3 person"
+                                android:layout_below="@id/product_detail_2"
+                                android:layout_toRightOf="@id/img_selected"
+                                android:id="@+id/product_detail_3"
 
-                            <TextView
-                                android:id="@+id/product_type_2_2_text"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
-                                android:layout_below="@id/product_type_2_1_text"
-                                android:text="Tuk Tuk 3X"/>
-
-                            <TextView
-                                android:id="@+id/product_type_2_3_text"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
-                                android:layout_below="@id/product_type_2_2_text"
-                                android:text="Tuk Tuk 3X"/>
+                                />-->
 
                         </RelativeLayout>
 
                     </android.support.v7.widget.CardView>
-                </RelativeLayout>
 
-            </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/products_select_option"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_above="@id/product_description_card"
+                        android:visibility="gone"
+                        >
+
+
+                        <android.support.v7.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            >
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:paddingBottom="20dp"
+                                android:paddingLeft="20dp"
+                                android:paddingRight="20dp"
+                                android:paddingTop="20dp"
+
+                                >
+
+                                <ImageButton
+                                    android:id="@+id/product_type_1_button"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_centerVertical="true"
+                                    android:adjustViewBounds="true"
+                                    android:background="@drawable/card_border"
+                                    android:onClick="product_type_1_button"
+                                    android:scaleType="centerCrop"
+                                    android:src="@drawable/product_type_1"/>
+
+                                <TextView
+                                    android:id="@+id/product_type_1_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@id/product_type_1_button"
+                                    android:text="Tuk Tuk 3X"/>
+
+                                <TextView
+                                    android:id="@+id/product_type_2_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@id/product_type_1_text"
+                                    android:text="Tuk Tuk 3X"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@id/product_type_2_text"
+                                    android:text="Tuk Tuk 3X"/>
+
+                                <ImageButton
+                                    android:id="@+id/product_type_2_button"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_centerVertical="true"
+                                    android:adjustViewBounds="true"
+                                    android:background="@drawable/card_border"
+                                    android:onClick="product_type_2_button"
+                                    android:scaleType="centerCrop"
+                                    android:src="@drawable/product_type_2"
+
+                                    />
+
+                                <TextView
+                                    android:id="@+id/product_type_2_1_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_below="@id/product_type_2_button"
+                                    android:text="Tuk Tuk 3X"/>
+
+                                <TextView
+                                    android:id="@+id/product_type_2_2_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_below="@id/product_type_2_1_text"
+                                    android:text="Tuk Tuk 3X"/>
+
+                                <TextView
+                                    android:id="@+id/product_type_2_3_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_below="@id/product_type_2_2_text"
+                                    android:text="Tuk Tuk 3X"/>
+
+                            </RelativeLayout>
+
+                        </android.support.v7.widget.CardView>
+                    </RelativeLayout>
+
+                </RelativeLayout>
 
 
             </RelativeLayout>

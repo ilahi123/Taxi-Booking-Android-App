@@ -1,41 +1,39 @@
 package com.tukla.www.tukla;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Toast;
+        import android.app.ProgressDialog;
+        import android.content.DialogInterface;
+        import android.content.Intent;
+        import android.graphics.Bitmap;
+        import android.net.Uri;
+        import android.provider.MediaStore;
+        import android.support.annotation.NonNull;
+        import android.support.v7.app.AppCompatActivity;
+        import android.os.Bundle;
+        import android.util.Log;
+        import android.view.View;
+        import android.widget.Button;
+        import android.widget.EditText;
+        import android.widget.ImageView;
+        import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+        import com.google.android.gms.tasks.OnCompleteListener;
+        import com.google.android.gms.tasks.OnFailureListener;
+        import com.google.android.gms.tasks.OnSuccessListener;
+        import com.google.android.gms.tasks.Task;
+        import com.google.firebase.auth.AuthResult;
+        import com.google.firebase.auth.FirebaseAuth;
+        import com.google.firebase.auth.FirebaseUser;
+        import com.google.firebase.database.DatabaseReference;
+        import com.google.firebase.database.FirebaseDatabase;
+        import com.google.firebase.storage.FirebaseStorage;
+        import com.google.firebase.storage.StorageReference;
+        import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Locale;
+        import java.io.ByteArrayOutputStream;
+        import java.io.File;
+        import java.io.IOException;
+        import java.time.LocalDateTime;
 
-public class SignUp extends AppCompatActivity {
+public class SignUpDriver extends AppCompatActivity {
 
     private EditText eFullName;
     private EditText eAddress;
@@ -44,6 +42,8 @@ public class SignUp extends AppCompatActivity {
     private EditText email_id;
     private EditText mpassword;
     private EditText mconfirmpassword;
+    private EditText eToda;
+    private EditText ePlateNumber;
     private Button mButton;
     private FirebaseAuth mAuth;
     private static final int PICK_IMAGE_REQUEST = 1;
@@ -52,8 +52,7 @@ public class SignUp extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String signUpVal = getIntent().getStringExtra("SIGN_UP_VAL");
-        setContentView(R.layout.activity_sign_up);
+        setContentView(R.layout.sign_up_driver);
 
         mAuth=FirebaseAuth.getInstance();
         eFullName=findViewById(R.id.eFullName);
@@ -63,6 +62,8 @@ public class SignUp extends AppCompatActivity {
         email_id=findViewById(R.id.eEmail);
         mpassword=findViewById(R.id.mpassword);
         mconfirmpassword=findViewById(R.id.mConfirmPassword);
+        eToda=findViewById(R.id.eToda);
+        ePlateNumber=findViewById(R.id.ePlateNumber);
 
         mButton=findViewById(R.id.button2);
         mButton.setOnClickListener(new View.OnClickListener() {
@@ -116,6 +117,16 @@ public class SignUp extends AppCompatActivity {
                 ePhoneNumber.requestFocus();
                 ePhoneNumber.setError("Phone Number cannot be empty");
             }
+            else if(eToda.getText().toString().equals(""))
+            {
+                eToda.requestFocus();
+                eToda.setError("Toda cannot be empty");
+            }
+            else if(ePlateNumber.getText().toString().equals(""))
+            {
+                ePlateNumber.requestFocus();
+                ePlateNumber.setError("Plate Number cannot be empty");
+            }
 
             else{
                 registerUser(email,password);
@@ -126,7 +137,7 @@ public class SignUp extends AppCompatActivity {
     }
 
     private void registerUser(String email,String password) {
-        final ProgressDialog dialog = ProgressDialog.show(SignUp.this, "",
+        final ProgressDialog dialog = ProgressDialog.show(SignUpDriver.this, "",
                 "Loading. Please wait...", true);
         mAuth.createUserWithEmailAndPassword(email,password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -139,12 +150,12 @@ public class SignUp extends AppCompatActivity {
 
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             updateDatabase();
-                            UpdateUI(firebaseUser);
+                            //UpdateUI(firebaseUser);
                         } else {
                             dialog.dismiss();
                             Toast.makeText(getApplicationContext(), "Unsuccesful registration", Toast.LENGTH_SHORT)
                                     .show();
-                            UpdateUI(null);
+                            //UpdateUI(null);
                         }
                     }
                 });
@@ -153,17 +164,20 @@ public class SignUp extends AppCompatActivity {
 
     private void updateDatabase() {
 
-        FirebaseDatabase database=FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference();
-        myRef=myRef.child("users");
-
         try {
             uploadFirebase(IDBitmap);
         } catch (Exception e) {
 
         } finally {
-            User user = new User(mAuth.getUid(),eFullName.getText().toString(),eAddress.getText().toString(),ePhoneNumber.getText().toString(),false, false, LocalDateTime.now().toString(),false);
-            myRef.child(mAuth.getUid()).setValue(user);
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+            DatabaseReference myRefUsers = database.getReference("users");
+            User user = new User(mAuth.getUid(),eFullName.getText().toString(),eAddress.getText().toString(),ePhoneNumber.getText().toString(),true, false, LocalDateTime.now().toString(),false);
+            myRefUsers.child(mAuth.getUid()).setValue(user);
+
+            DatabaseReference myRefDrivers = database.getReference("drivers");
+            Driver driver = new Driver(user,eToda.getText().toString(),ePlateNumber.getText().toString(), LocalDateTime.now().toString());
+            myRefDrivers.child(mAuth.getUid()).setValue(driver);
         }
 
     }
@@ -175,7 +189,7 @@ public class SignUp extends AppCompatActivity {
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent =new Intent(SignUp.this,Login.class);
+                        Intent intent =new Intent(SignUpDriver.this,Login.class);
                         finish();
                         startActivity(intent);
                     }

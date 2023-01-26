@@ -25,8 +25,13 @@
             android:id="@+id/profile_image"
             android:layout_width="72dp"
             android:layout_height="72dp"
-            android:src="@drawable/profile"
+            android:src="@drawable/user_blank"
             />
+<!--        <ImageView-->
+<!--            android:layout_width="72dp"-->
+<!--            android:layout_height="72dp"-->
+<!--            android:id="@+id/profile_image"-->
+<!--            android:src="@drawable/user_blank" />-->
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -2,11 +2,12 @@ package com.tukla.www.tukla;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Booking {
+public class Booking implements Serializable {
 
-    private String UuID;
+    private String bookingID;
     private String requestAt;
     private LatLngDefined origin;
     private LatLngDefined destination;
@@ -18,14 +19,13 @@ public class Booking {
     private String destinationText;
     private User user;
     private User driver;
-    private LatLngDefined driverLocation;
 
     public Booking() {
 
     }
 
     public Booking(
-            //String UuID,
+            String bookingID,
             User user,
             User driver,
             String requestAt,
@@ -36,10 +36,9 @@ public class Booking {
             double fare,
             double distance,
             String originText,
-            String destinationText,
-            LatLngDefined driverLocation) {
+            String destinationText) {
 
-        //this.UuID = UuID;
+        this.bookingID = bookingID;
         this.user = user;
         this.driver = driver;
         this.requestAt = requestAt;
@@ -51,12 +50,11 @@ public class Booking {
         this.fare = fare;
         this.destinationText = destinationText;
         this.originText = originText;
-        this.driverLocation = driverLocation;
     }
 
-//    public String getUuID() {
-//        return UuID;
-//    }
+    public String getBookingID() {
+        return bookingID;
+    }
 
     public User getUser() {
         return user;

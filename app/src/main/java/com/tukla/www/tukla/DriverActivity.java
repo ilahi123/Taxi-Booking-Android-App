@@ -1,6 +1,8 @@
 package com.tukla.www.tukla;
 
 import static com.tukla.www.tukla.R.id.map;
+import static com.tukla.www.tukla.R.id.nav_logOut;
+import static com.tukla.www.tukla.R.id.start;
 
 import android.Manifest;
 import android.app.Activity;
@@ -16,6 +18,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -48,6 +51,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -72,28 +76,37 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class DriverActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, LoaderManager.LoaderCallbacks<Object>, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener, Serializable {
 
     RelativeLayout products_select_option;
     ImageButton product1, product2;
@@ -122,7 +135,6 @@ public class DriverActivity extends AppCompatActivity
     TextView distanceText;
     Map<String, Booking> hashMapBookings;
     private FirebaseAuth mAuth;
-    private final String CODE_SCAN = "Scan";
     private final String CODE_CANCEL = "Cancel";
     private final String CODE_DONE = "Done";
 
@@ -134,20 +146,23 @@ public class DriverActivity extends AppCompatActivity
     LatLng targetDestination;
     Marker passengerMarker;
     Marker passengerDestinationMarker;
-    Driver loggedInDriverObj;
-    User passengerBookedObj;
-
-    private Boolean isDriverArrived = false;
+    User loggedInDriverObj;
+    //User passengerBookedObj;
+    List<Marker> bookingMarkers = new ArrayList<>();
+    Session thisSession;
+    NavigationView navigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setupLocationManager();
         mAuth = FirebaseAuth.getInstance();
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference("drivers").child(mAuth.getUid()).child("updatedAt").setValue(LocalDateTime.now().toString());
         hashMapBookings = new HashMap<>();
         super.onCreate( savedInstanceState );
         setContentView( R.layout.driver_activity_main );
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference("users").child(mAuth.getUid()).child("updatedAt").setValue(LocalDateTime.now().toString());
+
 
         Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
         setSupportActionBar( toolbar );
@@ -160,6 +175,7 @@ public class DriverActivity extends AppCompatActivity
 
         layoutDetails = findViewById(R.id.layoutDetails);
         acceptButton = findViewById(R.id.accept_button);
+        acceptButton.setVisibility(View.GONE);
         txtDropOff = findViewById(R.id.txt_dropoff);
         txtOrigin = findViewById(R.id.txt_origin);
 
@@ -169,13 +185,14 @@ public class DriverActivity extends AppCompatActivity
         drawer.setDrawerListener( toggle );
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById( R.id.nav_view );
+        navigationView = (NavigationView) findViewById( R.id.nav_view );
         navigationView.setNavigationItemSelectedListener( this );
 
         priceText = (TextView) findViewById(R.id.price_text);
         distanceText = (TextView) findViewById(R.id.distance_text);
 
         book_button=(Button)findViewById(R.id.book_button);
+        book_button.setText(CODE_CANCEL);
         book_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,18 +200,34 @@ public class DriverActivity extends AppCompatActivity
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference bookingsRef = database.getReference("bookings");
                     bookingsRef.child(clickedBookingID).child("isArrived").setValue(true);
-                    hashMapBookings = new HashMap<>();
-                    book_button.setText("Accept");
-                    book_button.setBackgroundColor(getColor(R.color.green));
-                    addBookingsMarkers();
-                } else if(book_button.getText().toString().equals(CODE_CANCEL)) {
+                    book_button.setText(CODE_CANCEL);
+                    book_button.setBackgroundColor(getColor(R.color.colorRed));
+                    book_button.setVisibility(View.GONE);
                     layoutDetails.setVisibility(View.GONE);
-                    book_button.setText(CODE_SCAN);
+                    mMap.clear();
                     addBookingsMarkers();
+                    Intent intent = new Intent( DriverActivity.this, DoneActivity.class );
+                    intent.putExtra("BOOKING_ID", thisSession.getBooking().getBookingID());
+                    intent.putExtra("ROLE","DRIVER");
+                    finish();
+                    startActivity( intent );
+                } else if(book_button.getText().toString().equals(CODE_CANCEL)) {
+                    mMap.clear();
+                    layoutDetails.setVisibility(View.GONE);
+
+//                    if(!sessionID.equals(null)) {
+//                        DatabaseReference sessionsRef = database.getReference("sessions");
+//                        sessionsRef.child(sessionID).removeValue();
+//
+//                        DatabaseReference bookingsRef = database.getReference("bookings");
+//                        bookingsRef.child(clickedBookingID).child("isArrived").setValue(false);
+//                        bookingsRef.child(clickedBookingID).child("driver").removeValue();
+//                        bookingsRef.child(clickedBookingID).child("isAccepted").setValue(false);
+//                    }
+                    addBookingsMarkers();
+
                     LatLng positionUpdate = new LatLng( DriverActivity.this.latitude,DriverActivity.this.longitude );
                     CameraUpdate update = CameraUpdateFactory.newLatLngZoom( positionUpdate, 15 );
-                    mMap.addMarker(new MarkerOptions().position(positionUpdate)
-                            .title("You are Here!"));
                     mMap.animateCamera( update );
                 }
             }
@@ -203,36 +236,28 @@ public class DriverActivity extends AppCompatActivity
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                book_button.setText(CODE_CANCEL);
-                book_button.setBackgroundColor(getColor(R.color.colorRed));
-                acceptButton.setVisibility(View.GONE);
 
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference bookingsRef = database.getReference("bookings");
-                bookingsRef.child(clickedBookingID).child("isAccepted").setValue(true);
-                bookingsRef.child(clickedBookingID).child("driver").setValue(loggedInDriverObj);
-                bookingsRef.child(clickedBookingID).child("driverLocation").setValue(new LatLngDefined(DriverActivity.this.latitude,DriverActivity.this.longitude));
             }
         });
 
-        DatabaseReference bookingsRef = database.getReference("bookings");
-        bookingsRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot bookingSnapshot: dataSnapshot.getChildren()) {
-                    Booking booking = bookingSnapshot.getValue(Booking.class);
-                    if(bookingSnapshot.getKey().equals(clickedBookingID)) {
-
-                    }
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Handle any errors that may occur
-            }
-        });
+//        DatabaseReference bookingsRef = database.getReference("bookings");
+//        bookingsRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                for (DataSnapshot bookingSnapshot: dataSnapshot.getChildren()) {
+//                    Booking booking = bookingSnapshot.getValue(Booking.class);
+//                    if(bookingSnapshot.getKey().equals(clickedBookingID)) {
+//
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                // Handle any errors that may occur
+//            }
+//        });
 
         DatabaseReference sessionRef = database.getReference("sessions");
         sessionRef.addValueEventListener(new ValueEventListener() {
@@ -240,13 +265,17 @@ public class DriverActivity extends AppCompatActivity
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
                     Session mySession = sessionSnapshot.getValue(Session.class);
-                    if(mySession.getBookingID().equals(clickedBookingID)) {
+                    if(mySession.getBooking().getBookingID().equals(clickedBookingID)) {
+                        thisSession = mySession;
                         if(mySession.getIsDriverArrived()) {
-                            targetDestination = new LatLng(hashMapBookings.get(clickedBookingID).getDestination().getLatitude(),hashMapBookings.get(clickedBookingID).getDestination().getLongitude());
-                            passengerMarker.remove();
-                            isDriverArrived = true;
-                            addMarker(targetDestination, "Destination",2);
+                            targetDestination = new LatLng(
+                                    mySession.getBooking().getDestination().getLatitude(),
+                                    mySession.getBooking().getDestination().getLongitude()
+                            );
+                            mMap.clear();
+                            addMarker(targetDestination, mySession.getBooking(),2);
                             book_button.setText(CODE_DONE);
+                            book_button.setBackgroundColor(getColor(R.color.green));
                             book_button.setVisibility(View.VISIBLE);
 
                         }
@@ -260,12 +289,45 @@ public class DriverActivity extends AppCompatActivity
             }
         });
 
-        database.getReference("drivers").addValueEventListener(new ValueEventListener() {
+        sessionRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                if(!clickedBookingID.equals("") || !clickedBookingID.equals(null)) {
+                    if(dataSnapshot.getKey().equals(clickedBookingID)) {
+                        Toast.makeText(getBaseContext(), "Passenger just cancelled the booking request", Toast.LENGTH_SHORT).show();
+                        finish();
+                        startActivity(getIntent());
+                    }
+                }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        database.getReference().child("users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
                     if(userSnapshot.getKey().equals(mAuth.getUid())) {
-                        loggedInDriverObj = userSnapshot.getValue(Driver.class);
+                        loggedInDriverObj = userSnapshot.getValue(User.class);
                         break;
                     }
                 }
@@ -278,44 +340,79 @@ public class DriverActivity extends AppCompatActivity
         });
     }
 
-    public void setToPassengerMap(String userID) {
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRefSessions = database.getReference().child("sessions");
-
-        LatLngDefined driverLocation = new LatLngDefined( DriverActivity.this.latitude,DriverActivity.this.longitude);
-        Session newSession = new Session(mAuth.getUid(),userID,clickedBookingID,LocalDateTime.now().toString(),driverLocation,false);
-        sessionID = myRefSessions.push().getKey();
-        myRefSessions.child(sessionID).setValue(newSession);
-        targetDestination = new LatLng(
-                hashMapBookings.get(clickedBookingID).getOrigin().getLatitude(),
-                hashMapBookings.get(clickedBookingID).getOrigin().getLongitude()
-        );
-
-        mMap.clear();
-        passengerMarker = addMarker(
-                new LatLng(
-                        hashMapBookings.get(clickedBookingID).getOrigin().getLatitude(),
-                        hashMapBookings.get(clickedBookingID).getOrigin().getLongitude()
-                ), "Pick Up Point", 1);
-
-        passengerDestinationMarker = addMarker(
-                new LatLng(
-                        hashMapBookings.get(clickedBookingID).getDestination().getLatitude(),
-                        hashMapBookings.get(clickedBookingID).getDestination().getLongitude()
-                ), "Drop Off Point", 2);
-
+//    public void setToPassengerMap(String userID) {
+//
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRefSessions = database.getReference().child("sessions");
+//
+//        LatLngDefined driverLocation = new LatLngDefined( DriverActivity.this.latitude,DriverActivity.this.longitude);
+//        Session newSession = new Session(mAuth.getUid(),userID,clickedBookingID,LocalDateTime.now().toString(),driverLocation,false);
+//        sessionID = myRefSessions.push().getKey();
+//        myRefSessions.child(sessionID).setValue(newSession);
+//        targetDestination = new LatLng(
+//                hashMapBookings.get(clickedBookingID).getOrigin().getLatitude(),
+//                hashMapBookings.get(clickedBookingID).getOrigin().getLongitude()
+//        );
+//
+//        mMap.clear();
+//        passengerMarker = addMarker(
+//                new LatLng(
+//                        hashMapBookings.get(clickedBookingID).getOrigin().getLatitude(),
+//                        hashMapBookings.get(clickedBookingID).getOrigin().getLongitude()
+//                ), "Pick Up Point", 1);
+//
+//        passengerDestinationMarker = addMarker(
+//                new LatLng(
+//                        hashMapBookings.get(clickedBookingID).getDestination().getLatitude(),
+//                        hashMapBookings.get(clickedBookingID).getDestination().getLongitude()
+//                ), "Drop Off Point", 2);
+//
 //        Intent intent = new Intent(DriverActivity.this, FindPassenger.class);
 //        finish();
 //        startActivity(intent);
-    }
+//    }
 
     @Override
     protected void onStart() {
         super.onStart();
         googleApiClient.connect();
         //mGoogleApiClient.connect();
+        /** setup drawer **/
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference("users").child(mAuth.getUid()).child("updatedAt").setValue(LocalDateTime.now().toString());
 
+        View navHeader = navigationView.getHeaderView(0);
+        CircleImageView profImg = navHeader.findViewById(R.id.profile_image);
+
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference imgRef = storageRef.child("images/"+mAuth.getUid()+".jpg");
+        imgRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Glide.with(profImg.getContext())
+                        .load(uri)
+                        .fitCenter()
+                        .into(profImg);
+            }
+        });
+
+        database.getReference("users").child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                TextView txtViewName = navHeader.findViewById(R.id.textView2);
+                txtViewName.setText(user.getFullname());
+
+                TextView txtViewEmail = navHeader.findViewById(R.id.textView);
+                txtViewEmail.setText(mAuth.getCurrentUser().getEmail());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        /** */
     }
 
     @Override
@@ -395,19 +492,29 @@ public class DriverActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if(id==R.id.nav_history) {
+            Intent intent = new Intent(this, HistoryActivity.class);
+            intent.putExtra("ROLE","DRIVER");
+            startActivity(intent);
+        } else if(id==nav_logOut) {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(this, Login.class);
+            startActivity(intent);
+            finish();
         }
+//        if (id == R.id.nav_camera) {
+//            // Handle the camera action
+//        } else if (id == R.id.nav_gallery) {
+//
+//        } else if (id == R.id.nav_slideshow) {
+//
+//        } else if (id == R.id.nav_manage) {
+//
+//        } else if (id == R.id.nav_share) {
+//
+//        } else if (id == R.id.nav_send) {
+//
+//        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById( R.id.drawer_layout );
         drawer.closeDrawer( GravityCompat.START );
@@ -434,7 +541,6 @@ public class DriverActivity extends AppCompatActivity
             Log.e( TAG, "Can't find style. Error: ", e );
         }
 
-
         if (ActivityCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -455,37 +561,43 @@ public class DriverActivity extends AppCompatActivity
             @Override
             public boolean onMarkerClick(Marker marker) {
 
-                if(isDriverArrived)
+
+                if(marker.getTag()==null)
                     return false;
-                if(marker.getTitle().equals(""))
-                    return false;
+//                if(!hashMapBookings.containsKey(marker.getTitle()))
+//                    return false;
+
+                Toast.makeText(getApplicationContext(),"OK", Toast.LENGTH_SHORT);
+
+                Booking booking = (Booking) marker.getTag();
+                Log.d("MARKER TAG", booking.toString());
+
                 layoutDetails.setVisibility(View.VISIBLE);
-                mMap.clear();
-                clickedBookingID = marker.getTitle();
 
-                Log.d("MARKER OPTIONS", clickedBookingID);
-                marker.setTitle(hashMapBookings.get(clickedBookingID).getOriginText());
+                removeBookingMarkers();
+                bookingMarkers.clear();
+                clickedBookingID = booking.getBookingID();
 
-                txtOrigin.setText(hashMapBookings.get(clickedBookingID).getOriginText());
-                txtDropOff.setText(hashMapBookings.get(clickedBookingID).getDestinationText());
-                priceText.setText(hashMapBookings.get(clickedBookingID).getFare()+"");
-                distanceText.setText(hashMapBookings.get(clickedBookingID).getDistance()+"");
+                txtOrigin.setText(booking.getOriginText());
+                txtDropOff.setText(booking.getDestinationText());
+                priceText.setText(booking.getFare()+"");
+                distanceText.setText(booking.getDistance()+"");
 
                 passengerMarker = addMarker(
                         new LatLng(
-                            hashMapBookings.get(clickedBookingID).getOrigin().getLatitude(),
-                            hashMapBookings.get(clickedBookingID).getOrigin().getLongitude()
-                        ), hashMapBookings.get(clickedBookingID).getOriginText(), 1
+                                booking.getOrigin().getLatitude(),
+                                booking.getOrigin().getLongitude()
+                        ), booking, 1
                 );
 
-                passengerDestinationMarker = addMarker(
-                        new LatLng(
-                                hashMapBookings.get(clickedBookingID).getDestination().getLatitude(),
-                                hashMapBookings.get(clickedBookingID).getDestination().getLongitude()
-                        ), hashMapBookings.get(clickedBookingID).getDestinationText(), 2
-                );
+                passengerDestinationMarker = mMap.addMarker(new MarkerOptions()
+                        .title(booking.getDestinationText())
+                        .position(
+                                new LatLng(booking.getDestination().getLatitude(),booking.getDestination().getLongitude())
+                        ).icon(BitmapDescriptorFactory.fromResource(R.drawable.finish_flag)));
 
                 //Toast.makeText(getApplicationContext(), marker.getTitle(), Toast.LENGTH_SHORT).show();
+                showCustomDialog(booking);
                 return false;
             }
         });
@@ -499,37 +611,149 @@ public class DriverActivity extends AppCompatActivity
                 FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                 DatabaseReference sessionsReference = firebaseDatabase.getReference("sessions");
                 if(sessionID!=null) {
-
                     sessionsReference.child(sessionID).child("driverLocation").setValue(new LatLngDefined(location.getLatitude(),location.getLongitude()));
                     Location passengerLoc = new Location("");
                     passengerLoc.setLatitude(targetDestination.latitude);
                     passengerLoc.setLongitude(targetDestination.latitude);
-
-//                    float distanceToPassenger = location.distanceTo(passengerLoc);
-//                    Log.d("DISTANCE",distanceToPassenger+"");
-//
-//                    if(distanceToPassenger<=10) {
-//                        sessionsReference.child(sessionID).child("driverLocation").setValue(new LatLngDefined(location.getLatitude(),location.getLongitude()));
-//                    }
                 }
             }
         });
 
     }
 
-    private Marker addMarker(LatLng location, String title, int type) {
-        MarkerOptions passengerMarkerOptions = new MarkerOptions();
+    private void showCustomDialog(Booking mb) {
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.marker_custom_window, null);
+
+        CircleImageView profImg = dialogView.findViewById(R.id.marker_img);
+
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference imgRef = storageRef.child("images/"+mb.getUser().getUserID()+".jpg");
+        imgRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Glide.with(profImg.getContext())
+                        .load(uri)
+                        .fitCenter()
+                        .into(profImg);
+            }
+        });
+
+        dialogView.findViewById(R.id.for_passenger_layout).setVisibility(View.VISIBLE);
+
+        TextView name = dialogView.findViewById(R.id.marker_name);
+        name.setText(mb.getUser().getFullname());
+
+        TextView loc = dialogView.findViewById(R.id.marker_location);
+        loc.setText(mb.getOriginText());
+
+        TextView phone = dialogView.findViewById(R.id.marker_phone_number);
+        phone.setText(mb.getUser().getPhone());
+
+        Button button1 = dialogView.findViewById(R.id.marker_btn_accept);
+        button1.setText("Accept");
+
+        Button button2 = dialogView.findViewById(R.id.marker_btn_cancel);
+        button2.setVisibility(View.VISIBLE);
+
+        if(mb.getIsAccepted()) {
+            button1.setVisibility(View.GONE);
+            button2.setBackgroundColor(getColor(R.color.green));
+            button2.setText("OK");
+        }
+
+        builder.setView(dialogView);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle button click event
+                mMap.clear();
+                book_button.setText(CODE_CANCEL);
+                book_button.setBackgroundColor(getColor(R.color.colorRed));
+                acceptButton.setVisibility(View.GONE);
+
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference bookingsRef = database.getReference("bookings");
+                bookingsRef.child(clickedBookingID).child("isAccepted").setValue(true);
+                bookingsRef.child(clickedBookingID).child("driver").setValue(loggedInDriverObj);
+                //bookingsRef.child(clickedBookingID).child("driverLocation").setValue(new LatLngDefined(DriverActivity.this.latitude,DriverActivity.this.longitude));
+
+                DatabaseReference sessionsRef = database.getReference("sessions");
+                sessionID = sessionsRef.push().getKey();
+                LatLngDefined myLocNow = new LatLngDefined(DriverActivity.this.latitude,DriverActivity.this.longitude);
+                Session sessionObj = new Session(
+                        loggedInDriverObj,
+                        hashMapBookings.get(clickedBookingID),
+                        LocalDateTime.now().toString(),
+                        myLocNow,
+                        false,
+                        false
+                );
+                sessionsRef.child(sessionID).setValue(sessionObj);
+
+                passengerMarker = addMarker(
+                        new LatLng(
+                                sessionObj.getBooking().getOrigin().getLatitude(),
+                                sessionObj.getBooking().getOrigin().getLongitude()
+                        ), sessionObj.getBooking(), 1
+                );
+
+//                passengerDestinationMarker = addMarker(
+//                        new LatLng(
+//                                sessionObj.getBooking().getDestination().getLatitude(),
+//                                sessionObj.getBooking().getDestination().getLongitude()
+//                        ), sessionObj.getBooking(), 2
+//                );
+
+                passengerDestinationMarker = mMap.addMarker(new MarkerOptions()
+                        .title(sessionObj.getBooking().getDestinationText())
+                        .position(
+                                new LatLng(sessionObj.getBooking().getDestination().getLatitude(),sessionObj.getBooking().getDestination().getLongitude())
+                        ).icon(BitmapDescriptorFactory.fromResource(R.drawable.finish_flag)));
+
+
+                targetDestination = new LatLng(
+                        sessionObj.getBooking().getOrigin().getLatitude(),
+                        sessionObj.getBooking().getOrigin().getLongitude()
+                );
+
+                dialog.dismiss();
+            }
+        });
+
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMap.clear();
+                layoutDetails.setVisibility(View.GONE);
+                addBookingsMarkers();
+
+                LatLng positionUpdate = new LatLng( DriverActivity.this.latitude,DriverActivity.this.longitude );
+                CameraUpdate update = CameraUpdateFactory.newLatLngZoom( positionUpdate, 15 );
+                mMap.animateCamera( update );
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private Marker addMarker(LatLng location, Booking booking, int type) {
+        MarkerOptions passengerMarkerOptions = new MarkerOptions();
+        passengerMarkerOptions.position(new LatLng(location.latitude,location.longitude));
+
+        //passengerMarkerOptions.title(title);
         if(type==1)
             passengerMarkerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.user_green_icon));
         else if(type==2)
             passengerMarkerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.finish_flag));
 
-        passengerMarkerOptions.position(
-                new LatLng(location.latitude,location.longitude)
-        );
-        passengerMarkerOptions.title(title);
-        return mMap.addMarker(passengerMarkerOptions);
+        Marker m = mMap.addMarker(passengerMarkerOptions);
+        m.setTag(booking);
+
+        return m;
     }
 
     private void setupLocationManager() {
@@ -876,16 +1100,6 @@ public class DriverActivity extends AppCompatActivity
     }
 
 
-    //Button Location Search
-    public void myLocation(View view) {
-
-        //CHANGE ACTIVITY
-        Intent intent = new Intent( DriverActivity.this, LocationAutoActivity.class );
-        startActivity( intent );
-
-
-    }
-
     protected void buildAlertMessageNoGps() {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -929,25 +1143,38 @@ public class DriverActivity extends AppCompatActivity
 
 
     private void addBookingsMarkers() {
-
+//        for (Map.Entry<String, Booking> bookingItem : hashMapBookings.entrySet()) {
+//            if(!bookingItem.getValue().getIsAccepted())
+//                addMarker(
+//                    new LatLng(bookingItem.getValue().getOrigin().getLatitude(),bookingItem.getValue().getOrigin().getLongitude()),
+//                    bookingItem.getKey(),1
+//                );
+//        }
+//
+//
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference refBookings = database.getReference("bookings");
         refBookings.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mMap.clear();
+                //mMap.clear();
+                removeBookingMarkers();
+                bookingMarkers.clear();
+                hashMapBookings.clear();
                 for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
                     String key = childSnapshot.getKey();
                     Booking booking = childSnapshot.getValue(Booking.class);
 
-                    if(!booking.getIsAccepted()) {
+                    if(!booking.equals(null) && !booking.getIsAccepted()) {
                         hashMapBookings.put(key, booking);
-                        addMarker(
+                        Marker bm = addMarker(
                                 new LatLng(
                                         booking.getOrigin().getLatitude(),
                                         booking.getOrigin().getLongitude()
-                                ), key, 1
+                                ), booking, 1
                         );
+                        bm.setTag(booking);
+                        bookingMarkers.add(bm);
                     }
                 }
             }
@@ -957,7 +1184,11 @@ public class DriverActivity extends AppCompatActivity
 
             }
         });
-//        mMap.addMarker(new MarkerOptions().position(positionUpdate)
-//                .title("Your Location"));
+    }
+
+    private void removeBookingMarkers() {
+        for(int i=0; i<bookingMarkers.size(); i++) {
+            bookingMarkers.get(i).remove();
+        }
     }
 }

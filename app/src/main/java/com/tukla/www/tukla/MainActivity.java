@@ -1,7 +1,9 @@
 package com.tukla.www.tukla;
 
+import static com.tukla.www.tukla.R.id.custom;
 import static com.tukla.www.tukla.R.id.map;
 import static com.tukla.www.tukla.R.id.myLocation;
+import static com.tukla.www.tukla.R.id.nav_logOut;
 
 import android.Manifest;
 import android.app.Activity;
@@ -24,6 +26,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -39,6 +42,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +53,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -68,17 +73,22 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -86,6 +96,7 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.ref.Reference;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -93,17 +104,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, LoaderManager.LoaderCallbacks<Object>, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener, Serializable {
 
-    RelativeLayout products_select_option;
+    //RelativeLayout products_select_option;
     Button myCurrentloc,book_button;
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private final static int PERMISSION_MY_LOCATION = 3;
-
 
     private static final int REQUEST_CHECK_SETTINGS = 1000;
     private MapFragment mapFragment;
@@ -119,12 +131,12 @@ public class MainActivity extends AppCompatActivity
 
     Geocoder geocoder;
     List<android.location.Address> addresses;
-    EditText txtDropOff;
+    TextView txtDropOff;
     TextView priceText;
     TextView distanceText;
     LatLng myPosition;
     LatLng positionUpdate;
-    LatLng targetDestination;
+    //LatLng targetDestination;
     private FirebaseAuth mAuth;
     private final String CODE_BOOK = "Book";
     private final String CODE_CANCEL = "Cancel";
@@ -136,13 +148,14 @@ public class MainActivity extends AppCompatActivity
     Marker driverMarker;
     Marker destinationMarker;
     Booking myBookingObj;
-    TextView platenumber_text;
-    TextView drivername_text;
-    private String driverName;
-    private String driverPlateNumber;
+    //TextView platenumber_text;
+    //TextView drivername_text;
+    //private String driverName;
+    //private String driverPlateNumber;
     User loggedInUser;
-    User bookedDriver;
-    CardView driver_info;
+    Session thisSession;
+    //CardView driver_info;
+    NavigationView navigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setupLocationManager();
@@ -167,24 +180,22 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close );
         drawer.setDrawerListener( toggle );
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById( R.id.nav_view );
+        navigationView = (NavigationView) findViewById( R.id.nav_view );
         navigationView.setNavigationItemSelectedListener( this );
 
-        /** **/
-        txtDropOff = (EditText) findViewById(R.id.txt_dropoff);
+        txtDropOff = (TextView) findViewById(R.id.txt_dropoff);
         //
         //Buttons Select Product option
         //select_btn = (ImageButton) findViewById( R.id.img_selected );
-        products_select_option = (RelativeLayout) findViewById( R.id.products_select_option );
+        //products_select_option = (RelativeLayout) findViewById( R.id.products_select_option );
         myCurrentloc=(Button) findViewById( R.id.myCLocation );
         priceText = (TextView) findViewById(R.id.price_text);
         distanceText = (TextView) findViewById(R.id.distance_text);
-        drivername_text = (TextView) findViewById(R.id.drivername_text);
-        platenumber_text = (TextView) findViewById(R.id.platenumber_text);
-        //updateFirebase();
-        driver_info = (CardView) findViewById(R.id.driver_info);
+        //drivername_text = (TextView) findViewById(R.id.drivername_text);
+        //platenumber_text = (TextView) findViewById(R.id.platenumber_text);
 
         book_button=(Button)findViewById(R.id.book_button);
+        //book_button.setText(CODE_SOS);
         book_button.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -195,14 +206,15 @@ public class MainActivity extends AppCompatActivity
                         Address destinationResult = setDestination();
 
                         if(destinationResult!=null) {
-                            driver_info.setVisibility(View.VISIBLE);
+                            //driver_info.setVisibility(View.VISIBLE);
                             mMap.clear();
                             book_button.setText(CODE_CANCEL);
                             book_button.setBackgroundColor(getColor(R.color.colorRed));
                             String myDestination = destinationResult.getAddressLine(0);
                             txtDropOff.setText(myDestination);
                             myPosition = new LatLng(MainActivity.this.latitude,MainActivity.this.longitude);
-                            positionUpdate = new LatLng( destinationResult.getLatitude(), destinationResult.getLongitude() );
+
+                            //positionUpdate = new LatLng( destinationResult.getLatitude(), destinationResult.getLongitude() );
                             String directionUrl = getDirectionsUrl(myPosition,positionUpdate);
 
                             //AsyncDirectionsAPI asyncDirectionsAPI = new AsyncDirectionsAPI();
@@ -254,8 +266,10 @@ public class MainActivity extends AppCompatActivity
                             // queue to fetch all the json data.
                             queue.add(jsonObjectRequest);
 
-                            mMap.addMarker(new MarkerOptions().position(positionUpdate)
-                                    .title("Destination"));
+                            destinationMarker = mMap.addMarker(new MarkerOptions().position(positionUpdate)
+                                    .title("Destination")
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.finish_flag))
+                            );
 
                             CameraUpdate update = CameraUpdateFactory.newLatLngZoom( positionUpdate, 15 );
                             mMap.animateCamera(update);
@@ -263,8 +277,8 @@ public class MainActivity extends AppCompatActivity
     //                        waitBookAccept();
 
                         }
-                    } else if(book_button.getText().equals(CODE_CANCEL)){
-                        driver_info.setVisibility(View.GONE);
+                    } else if(book_button.getText().toString().equals(CODE_CANCEL)){
+                        //driver_info.setVisibility(View.GONE);
                         mMap.clear();
                         book_button.setText(CODE_BOOK);
                         book_button.setBackgroundColor(getColor(R.color.green));
@@ -273,10 +287,16 @@ public class MainActivity extends AppCompatActivity
                         database.getReference("bookings").child(recentBookingID).removeValue();
                     } else if (book_button.getText().equals(CODE_DRIVER_WAIT)) {
                         Toast.makeText(getApplicationContext(), "Driver is on the way", Toast.LENGTH_SHORT);
-                    }
-                    else if (book_button.getText().equals(CODE_SOS)) {
-                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "+63495451698"));
-                        startActivity(intent);
+                    } else if (book_button.getText().toString().equals(CODE_SOS)) {
+                        // Check if app has permission to make phone calls
+                        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                            // Request permission if it does not have it
+                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CALL_PHONE}, 123);
+                        } else {
+                            // App has permission, make phone call
+                            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "+63495451698"));
+                            startActivity(intent);
+                        }
                     }
                 } catch (Exception e) {
                     Toast.makeText(getApplicationContext(),"An error occured! Try selecting another place.",Toast.LENGTH_SHORT);
@@ -296,24 +316,42 @@ public class MainActivity extends AppCompatActivity
 //                    }
                     if(bookingSnapshot.getKey().equals(recentBookingID)) {
                         Booking booking = bookingSnapshot.getValue(Booking.class);
+                        myBookingObj = booking;
                         if(booking.getIsAccepted() && !booking.getIsArrived()) {
-                            //           Intent intent = new Intent( MainActivity.this, FindDriver.class );
-                            //         startActivity( intent );
-
-                            book_button.setText(CODE_DRIVER_WAIT);
+                            //book_button.setText(CODE_DRIVER_WAIT);
                             book_button.setBackgroundColor(getColor(R.color.blue));
-
                             Toast.makeText(getBaseContext(), "Driver accepted your booking, please wait", Toast.LENGTH_SHORT).show();
-                            displayDriver();
-                            drivername_text.setText(driverName);
-                            platenumber_text.setText(driverPlateNumber);
+
+                            database.getReference("sessions").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for(DataSnapshot sessionSnap : dataSnapshot.getChildren()){
+                                        Session sessionx = sessionSnap.getValue(Session.class);
+                                        if(sessionx.getBooking().getBookingID().equals(booking.getBookingID())) {
+                                            showCustomDialog(sessionx);
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
                         } else if(booking.getIsAccepted() && booking.getIsArrived()) {
-                            priceText.setText(0);
-                            distanceText.setText(0);
-                            mMap.clear();
-                            txtDropOff.setText("");
-                            book_button.setText(CODE_BOOK);
-                            book_button.setBackgroundColor(getColor(R.color.green));
+                            //priceText.setText(0);
+                            //distanceText.setText(0);
+                            //mMap.clear();
+                            //txtDropOff.setText("");
+                            //book_button.setText(CODE_BOOK);
+                            //book_button.setBackgroundColor(getColor(R.color.green));
+                            Intent intent = new Intent( MainActivity.this, DoneActivity.class );
+
+                            intent.putExtra("BOOKING_ID", booking.getBookingID());
+                            intent.putExtra("ROLE","PASSENGER");
+                            finish();
+                            startActivity( intent );
                         }
                         break;
                     }
@@ -326,10 +364,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-//        MarkerOptions a = new MarkerOptions()
-//                .position(new LatLng(50,6));
-//        Marker driverMarker = mMap.addMarker(a);
-
         DatabaseReference mySessionsRef = database.getReference().child("sessions");
         mySessionsRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -337,13 +371,20 @@ public class MainActivity extends AppCompatActivity
                 for(DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
 
                     Session mySession = sessionSnapshot.getValue(Session.class);
-                    if(mySession.getBookingID().equals(recentBookingID)) {
+                    if(mySession.getBooking().getBookingID().equals(recentBookingID)) {
+                        thisSession = mySession;
                         LatLng positionUpdate = new LatLng(mySession.getDriverLocation().getLatitude(),mySession.getDriverLocation().getLongitude());
-                       // CameraUpdate update = CameraUpdateFactory.newLatLngZoom( positionUpdate, 15 );
                         driverMarker.remove();
-                        driverMarker = mMap.addMarker(new MarkerOptions().position(positionUpdate));
+                        MarkerOptions myMarkerOptions = new MarkerOptions();
+                        myMarkerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_tricycle));
+                        myMarkerOptions.position(positionUpdate);
+                        //myMarkerOptions.title("Driver: "+mySession.getDriver().getFullname()+" | Plate No. "+mySession.getDriver().getDriver().getPlateNumber());
+                        driverMarker = mMap.addMarker(myMarkerOptions);
+                        driverMarker.setTag(mySession.getDriver());
 
-                        //mMap.animateCamera( update );
+                        CameraUpdate camerUpdate = CameraUpdateFactory.newLatLngZoom( positionUpdate, 20 );
+                        mMap.animateCamera(camerUpdate);
+
                         Location driverLocation = new Location("");
                         driverLocation.setLatitude(mySession.getDriverLocation().getLatitude());
                         driverLocation.setLongitude(mySession.getDriverLocation().getLongitude());
@@ -358,23 +399,65 @@ public class MainActivity extends AppCompatActivity
                             dest.setLatitude(myBookingObj.getDestination().getLatitude());
                             dest.setLongitude(myBookingObj.getDestination().getLongitude());
                             driverDistance = myCurrLocation.distanceTo(dest);
+                        } else {
+                            book_button.setText(driverDistance+"m");
                         }
 
-                        if(driverDistance<=10) {
+                        if(driverDistance<=15) {
                             if (!mySession.getIsDriverArrived()) {
                                 mySessionsRef.child(sessionSnapshot.getKey()).child("isDriverArrived").setValue(true);
                                 book_button.setText(CODE_SOS);
                                 book_button.setBackgroundColor(getColor(R.color.colorRed));
-                                Toast.makeText(getApplicationContext(), CODE_DRIVER_OK, Toast.LENGTH_LONG);
-                            } else {
-                                Toast.makeText(getApplicationContext(), "You have arrived in your destination! Thank you.", Toast.LENGTH_LONG);
-                                //DatabaseReference bookRef = database.getReference("bookings");
-                                //bookRef.child(recentBookingID).child("isArrived").setValue(true);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                builder.setTitle("Your Driver is here!");
+                                builder.setMessage("I am about 15 meters away. My plate number is "+myBookingObj.getDriver().getDriver().getPlateNumber());
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
+                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // Do something when the OK button is clicked
+                                        dialog.dismiss();
+                                    }
+                                });
+
                             }
                         }
                         break;
                     }
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        mySessionsRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                Session session = dataSnapshot.getValue(Session.class);
+                if(session.getBooking().getBookingID().equals(recentBookingID)) {
+                    Toast.makeText(getBaseContext(), "Sorry, the driver cancelled your booking.", Toast.LENGTH_SHORT).show();
+                    finish();
+                    startActivity(getIntent());
+                }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
             }
 
             @Override
@@ -389,6 +472,7 @@ public class MainActivity extends AppCompatActivity
                 for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
                     if(userSnapshot.getKey().equals(mAuth.getUid())) {
                         loggedInUser = userSnapshot.getValue(User.class);
+                        Log.d("SAVED USER OBJECT TAG",loggedInUser.toString());
                         break;
                     }
                 }
@@ -406,7 +490,42 @@ public class MainActivity extends AppCompatActivity
         super.onStart();
         googleApiClient.connect();
         //mGoogleApiClient.connect();
+        /** setup drawer **/
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference("users").child(mAuth.getUid()).child("updatedAt").setValue(LocalDateTime.now().toString());
 
+        View navHeader = navigationView.getHeaderView(0);
+        CircleImageView profImg = navHeader.findViewById(R.id.profile_image);
+
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference imgRef = storageRef.child("images/"+mAuth.getUid()+".jpg");
+        imgRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Glide.with(profImg.getContext())
+                        .load(uri)
+                        .fitCenter()
+                        .into(profImg);
+            }
+        });
+
+        database.getReference("users").child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                TextView txtViewName = navHeader.findViewById(R.id.textView2);
+                txtViewName.setText(user.getFullname());
+
+                TextView txtViewEmail = navHeader.findViewById(R.id.textView);
+                txtViewEmail.setText(mAuth.getCurrentUser().getEmail());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        /** */
     }
 
 
@@ -490,25 +609,43 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if(id==R.id.nav_history) {
+            Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+            intent.putExtra("ROLE","PASSENGER");
+            startActivity(intent);
+        } else if(id==nav_logOut) {
+            if(!recentBookingID.equals(null)) {
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                database.getReference("sessions").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
+                            Session session = sessionSnapshot.getValue(Session.class);
+                            if(session.getBooking().getBookingID().equals(recentBookingID)) {
+                                if(!session.getIsDone()) {
+                                    database.getReference("sessions").child(sessionSnapshot.getKey()).removeValue();
+                                    database.getReference("bookings").child(session.getBooking().getBookingID()).removeValue();
+                                }
+                            }
+                        }
+                    }
 
-        } else if (id == R.id.nav_slideshow) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-        } else if (id == R.id.nav_manage) {
+                    }
+                });
+            }
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(MainActivity.this, Login.class);
+            startActivity(intent);
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById( R.id.drawer_layout );
         drawer.closeDrawer( GravityCompat.START );
         return true;
-
-
     }
 
     @Override
@@ -551,20 +688,20 @@ public class MainActivity extends AppCompatActivity
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                Log.d("I CLICKED HERE", latLng.toString());
                 if(book_button.getText().toString().equals(CODE_BOOK)) {
                     try {
                         mMap.clear();
                         List<Address> addressList = geocoder.getFromLocation(latLng.latitude,latLng.longitude,1);
                         txtDropOff.setText(addressList.get(0).getAddressLine(0));
 
-                        LatLng positionUpdate = new LatLng( latLng.latitude,latLng.longitude );
-                        CameraUpdate update = CameraUpdateFactory.newLatLngZoom( positionUpdate, 15 );
-                        destinationMarker = mMap.addMarker(new MarkerOptions().position(positionUpdate));
+                        positionUpdate = new LatLng( latLng.latitude,latLng.longitude );
+                        CameraUpdate update = CameraUpdateFactory.newLatLngZoom( positionUpdate, 20 );
+                        destinationMarker = mMap.addMarker(new MarkerOptions().position(positionUpdate).icon(BitmapDescriptorFactory.fromResource(R.drawable.finish_flag)));
                         mMap.animateCamera( update );
 
                     } catch (IOException e) {
                         e.printStackTrace();
+                        txtDropOff.setText("");
                     }
                 }
             }
@@ -910,33 +1047,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    //Button Location Search
-    public void myLocation(View view) {
 
-        //CHANGE ACTIVITY
-        Intent intent = new Intent( MainActivity.this, LocationAutoActivity.class );
-        startActivity( intent );
-
-
-    }
-
-    public void destination(View view) {
-       Intent intent = new Intent( MainActivity.this, LocationAutoActivity.class );
-        startActivity( intent );
-
-    }
-
-    //Select product option button click
-    public void product_type_1_button(View view) {
-        products_select_option.setVisibility( View.GONE );
-
-    }
-
-    //Select product option button click
-    public void product_type_2_button(View view) {
-        products_select_option.setVisibility( View.GONE );
-
-    }
 
     protected void buildAlertMessageNoGps() {
 
@@ -1016,14 +1127,54 @@ public class MainActivity extends AppCompatActivity
         recentBookingID = myBookingsRef.push().getKey();
         LatLngDefined l1 = new LatLngDefined(myPosition.latitude,myPosition.longitude);
         LatLngDefined l2 = new LatLngDefined(positionUpdate.latitude,positionUpdate.longitude);
-        myBookingObj = new Booking(loggedInUser, null,LocalDateTime.now().toString(),l1,l2,false,false, paramFare, paramDistance,myCurrentloc.getText().toString(),txtDropOff.getText().toString(),null);
+        myBookingObj = new Booking(recentBookingID,loggedInUser, null,LocalDateTime.now().toString(),l1,l2,false,false, paramFare, paramDistance,myCurrentloc.getText().toString(),txtDropOff.getText().toString());
         myBookingsRef.child(recentBookingID).setValue(myBookingObj);
     }
 
-    private void displayDriver() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference xas = database.getReference("sessions").child(recentBookingID);
-        Log.d("TAG REF", xas.child("bookingId").toString());
-    }
+    private void showCustomDialog(Session mb) {
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.marker_custom_window, null);
+
+        CircleImageView profImg = dialogView.findViewById(R.id.marker_img);
+
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference imgRef = storageRef.child("images/" + mb.getDriver().getUserID() + ".jpg");
+        imgRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Glide.with(profImg.getContext())
+                        .load(uri)
+                        .fitCenter()
+                        .into(profImg);
+            }
+        });
+
+        dialogView.findViewById(R.id.for_driver_layout).setVisibility(View.VISIBLE);
+
+        dialogView.findViewById(R.id.txt_driver_found).setVisibility(View.VISIBLE);
+        TextView name = dialogView.findViewById(R.id.marker_name);
+        name.setText(mb.getDriver().getFullname());
+
+        TextView phone = dialogView.findViewById(R.id.marker_phone_number);
+        phone.setText(mb.getDriver().getPhone());
+
+        TextView plateNum = dialogView.findViewById(R.id.marker_plate);
+        plateNum.setText(mb.getDriver().getDriver().getPlateNumber());
+
+        Button button = dialogView.findViewById(R.id.marker_btn_accept);
+
+        builder.setView(dialogView);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle button click event
+                dialog.dismiss();
+            }
+        });
+
+    }
 }

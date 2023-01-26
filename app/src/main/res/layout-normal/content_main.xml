@@ -8,7 +8,7 @@
     xmlns:map="http://schemas.android.com/apk/res-auto"
    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.tukla.www.tukla.MainActivity"
+    tools:context=".MainActivity"
     tools:showIn="@layout/app_bar_main">
 
 
@@ -107,8 +107,6 @@
                                     android:fontFamily="@string/fontFamily"
                                     android:gravity="left|center_vertical"
                                     android:maxLines="1"
-
-                                    android:onClick="myLocation"
                                     android:paddingBottom="5dp"
                                     android:paddingLeft="@dimen/button_padding1"
                                     android:paddingTop="5dp"
@@ -180,7 +178,8 @@
 <!--                                    android:textColor="@color/colorFont"-->
 <!--                                    android:textSize="@dimen/nml_dv_txt"/>-->
 
-                                <EditText
+                                <TextView
+                                    android:editable="false"
                                     android:id="@+id/txt_dropoff"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"

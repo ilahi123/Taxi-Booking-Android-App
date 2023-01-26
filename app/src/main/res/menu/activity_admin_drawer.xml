@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <!--        <item-->
+        <!--            android:id="@+id/nav_camera"-->
+        <!--            android:icon="@drawable/ic_menu_camera"-->
+        <!--            android:title="Import" />-->
+        <!--        <item-->
+        <!--            android:id="@+id/nav_gallery"-->
+        <!--            android:icon="@drawable/ic_menu_gallery"-->
+        <!--            android:title="Gallery" />-->
+        <!--        <item-->
+        <!--            android:id="@+id/nav_slideshow"-->
+        <!--            android:icon="@drawable/ic_menu_slideshow"-->
+        <!--            android:title="Slideshow" />-->
+
+        <item
+            android:id="@+id/nav_user_list"
+            android:icon="@drawable/user_blank"
+            android:title="For verification" />
+
+    </group>
+
+    <item android:title="Settings">
+        <menu>
+            <!--            <item-->
+            <!--                android:id="@+id/nav_share"-->
+            <!--                android:icon="@drawable/ic_menu_share"-->
+            <!--                android:title="Share" />-->
+            <item
+                android:id="@+id/nav_logOut"
+                android:icon="@drawable/ic_close_black_48dp"
+                android:title="Log Out" />
+        </menu>
+    </item>
+
+</menu>

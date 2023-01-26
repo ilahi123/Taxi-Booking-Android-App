@@ -22,17 +22,23 @@
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/ic_launcher"
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/MyMaterialTheme">
+        <activity
+            android:name=".DoneActivity"
+            android:exported="true" />
         <activity
             android:name=".AdminActivity"
             android:exported="true" />
         <activity
             android:name=".DriverActivity"
+            android:exported="true" />
+        <activity
+            android:name=".HistoryActivity"
             android:exported="true" />
         <activity
             android:name=".SignUpDriver"
@@ -66,8 +72,6 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".LocationAutoActivity" />
-        <activity android:name=".FindDriver" />
     </application>
 
 </manifest>

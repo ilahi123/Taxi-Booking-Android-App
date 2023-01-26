@@ -94,7 +94,7 @@ public class SignUpDriver extends AppCompatActivity {
         }
         else{
 
-            if(password.length()<=6)
+            if(password.length()<6)
             {
                 mpassword.requestFocus();
                 mpassword.setError("Password must be atleast 6 characters long");
@@ -146,8 +146,7 @@ public class SignUpDriver extends AppCompatActivity {
 
                         if (task.isSuccessful()) {
                             dialog.dismiss();
-                            showErrorDailog("Succesfully Registered. Please Login");
-
+                            showErrorDailog("Succesfully Registered. Once the Admin verifies your account, you can now log in. Thank you!");
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             updateDatabase();
                             //UpdateUI(firebaseUser);
@@ -172,12 +171,11 @@ public class SignUpDriver extends AppCompatActivity {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
 
             DatabaseReference myRefUsers = database.getReference("users");
-            User user = new User(mAuth.getUid(),eFullName.getText().toString(),eAddress.getText().toString(),ePhoneNumber.getText().toString(),true, false, LocalDateTime.now().toString(),false);
+            Driver driver = new Driver(eToda.getText().toString(),ePlateNumber.getText().toString());
+            User user = new User(mAuth.getUid(),eFullName.getText().toString(),eAddress.getText().toString(),ePhoneNumber.getText().toString(),true, false, LocalDateTime.now().toString(),false, driver);
             myRefUsers.child(mAuth.getUid()).setValue(user);
 
-            DatabaseReference myRefDrivers = database.getReference("drivers");
-            Driver driver = new Driver(user,eToda.getText().toString(),ePlateNumber.getText().toString(), LocalDateTime.now().toString());
-            myRefDrivers.child(mAuth.getUid()).setValue(driver);
+
         }
 
     }

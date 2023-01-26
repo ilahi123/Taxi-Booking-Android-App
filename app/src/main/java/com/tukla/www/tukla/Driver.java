@@ -4,23 +4,17 @@ public class Driver {
 
     private String toda;
     private String plateNumber;
-    private User user;
-    private String updatedAt;
 
-    public Driver(
-            User user,
-            String toda,
-            String plateNumber,
-            String updatedAt) {
+    public Driver() {
 
-        this.user = user;
-        this.toda = toda;
-        this.plateNumber = plateNumber;
-        this.updatedAt = updatedAt;
     }
 
-    public User getUser() {
-        return user;
+    public Driver(
+            String toda,
+            String plateNumber) {
+
+        this.toda = toda;
+        this.plateNumber = plateNumber;
     }
 
     public String getToda() {
@@ -31,7 +25,4 @@ public class Driver {
         return this.plateNumber;
     }
 
-    public String getUpdatedAt() {
-        return updatedAt;
-    }
 }

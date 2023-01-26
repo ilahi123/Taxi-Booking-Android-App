@@ -92,11 +92,13 @@ public class SignUp extends AppCompatActivity {
             email_id.setError("INVALID EMAIL");
         }
         else{
+            if(imgViewId.getDrawable() == null) {
+                Toast.makeText(getApplicationContext(), "ID is required!", Toast.LENGTH_SHORT).show();
 
-            if(password.length()<=6)
+            } else if(password.length()<6)
             {
                 mpassword.requestFocus();
-                mpassword.setError("Password must be atleast 6 characters long");
+                mpassword.setError("Password must be at least 6 characters long");
             }
 
             else if(!mconfirmpassword.getText().toString().equals(password))
@@ -162,7 +164,7 @@ public class SignUp extends AppCompatActivity {
         } catch (Exception e) {
 
         } finally {
-            User user = new User(mAuth.getUid(),eFullName.getText().toString(),eAddress.getText().toString(),ePhoneNumber.getText().toString(),false, false, LocalDateTime.now().toString(),false);
+            User user = new User(mAuth.getUid(),eFullName.getText().toString(),eAddress.getText().toString(),ePhoneNumber.getText().toString(),false, true, LocalDateTime.now().toString(),false,null);
             myRef.child(mAuth.getUid()).setValue(user);
         }
 

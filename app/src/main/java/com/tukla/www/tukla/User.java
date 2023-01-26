@@ -18,6 +18,7 @@ public class User {
     private Boolean isVerified;
     private String updatedAt;
     private Boolean isAdmin;
+    private Driver driver;
 
     public User(){
     }
@@ -30,7 +31,8 @@ public class User {
             Boolean isDriver,
             Boolean isVerified,
             String updatedAt,
-            Boolean isAdmin) {
+            Boolean isAdmin,
+            Driver driver) {
 
         this.userID = userID;
         this.fullname = fullname;
@@ -40,6 +42,7 @@ public class User {
         this.isVerified = isVerified;
         this.updatedAt = updatedAt;
         this.isAdmin = isAdmin;
+        this.driver = driver;
     }
 
     public String getUserID() {
@@ -68,6 +71,14 @@ public class User {
 
     public Boolean getIsAdmin() {
         return isAdmin;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public Driver getDriver() {
+        return driver;
     }
 
     public void setIdImgUrl(String url) {

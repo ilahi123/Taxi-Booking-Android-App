@@ -3,43 +3,59 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/drawable-v21/ic_menu_camera.xml" value="0.19583333333333333" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/drawable-v21/ic_menu_gallery.xml" value="0.1425925925925926" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/drawable-v21/ic_menu_manage.xml" value="0.18020833333333333" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/drawable-v21/ic_menu_slideshow.xml" value="0.18020833333333333" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/drawable/card_border.xml" value="0.1425925925925926" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/drawable/ic_adjust_black_24dp.xml" value="0.18020833333333333" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/drawable/location__end.xml" value="0.18020833333333333" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/drawable/location__start.xml" value="0.18020833333333333" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/drawable/location_pin.xml" value="0.18020833333333333" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/drawable/menu_button2.xml" value="0.1425925925925926" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/drawable/nav_header_admin.xml" value="0.221875" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/drawable/product_type_1.xml" value="0.18020833333333333" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/drawable/product_type_2.xml" value="0.18020833333333333" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/drawable/road_location.xml" value="0.18020833333333333" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/drawable/side_nav_bar.xml" value="0.1425925925925926" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/drawable/star_before_save.xml" value="0.18020833333333333" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/drawable/text_background.xml" value="0.18020833333333333" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout-large/content_main.xml" value="0.1" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout-normal/content_main.xml" value="0.18" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/activity_admin.xml" value="0.36666666666666664" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/activity_done.xml" value="0.4" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/activity_find_driver.xml" value="0.25" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/activity_find_passenger.xml" value="0.21422101449275363" />
-        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/activity_login.xml" value="0.184375" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/activity_history.xml" value="0.21510416666666668" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/activity_login.xml" value="0.25" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/activity_main.xml" value="0.10052083333333334" />
-        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/activity_sign_up.xml" value="0.33" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/activity_sign_up.xml" value="0.19883040935672514" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/app_bar_admin.xml" value="0.23822463768115942" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/app_bar_autocomplete.xml" value="0.10052083333333334" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/app_bar_driver.xml" value="0.19948849104859334" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/app_bar_history.xml" value="0.21510416666666668" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/app_bar_main.xml" value="0.10052083333333334" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/content_admin.xml" value="0.1859375" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/content_driver.xml" value="0.1" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/content_history.xml" value="0.21510416666666668" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/content_main.xml" value="0.1" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/content_sign_up.xml" value="0.1793478260869565" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/custom_dialog_imageview.xml" value="0.24444444444444444" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/driver_activity_main.xml" value="0.36277173913043476" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/empty_list.xml" value="0.1" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/fragment_admin_activity.xml" value="0.36666666666666664" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/fragment_admin_activity_list.xml" value="0.36666666666666664" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/fragment_first.xml" value="0.1793478260869565" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/fragment_second.xml" value="0.1793478260869565" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/history_list.xml" value="0.22" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/marker_custom_window.xml" value="0.25" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/nav_header_admin.xml" value="0.20572916666666666" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/nav_header_main.xml" value="0.1" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/place_autocomplete_adapter.xml" value="0.24954710144927536" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/place_search.xml" value="0.1" />
-        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/sign_up_driver.xml" value="0.22631578947368422" />
-        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/user_list.xml" value="0.1" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/sign_up_driver.xml" value="0.33" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/layout/user_list.xml" value="0.33" />
+        <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/menu/activity_admin_drawer.xml" value="0.20572916666666666" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/menu/activity_main_drawer.xml" value="0.36666666666666664" />
         <entry key="..\:/PADZ/android/EasyTrayk2/app/src/main/res/menu/main.xml" value="0.36666666666666664" />
       </map>

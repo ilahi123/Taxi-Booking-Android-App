@@ -1,312 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dp"
-    tools:context=".SignUpDriver">
+    tools:context=".SignUp"
+    android:background="@drawable/side_nav_bar"
+    android:orientation="vertical">
 
-
-    <LinearLayout
-        android:id="@+id/layoutForm1"
+    <TextView
+        android:textAlignment="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark"
-        android:orientation="vertical">
+        android:textSize="26dp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:text="SIGN UP"
+        android:layout_marginBottom="10dp"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_menu_camera" />
 
-            <TextView
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-
-                android:text="Full Name"
-                android:textColor="#ffffff"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:typeface="sans" />
-
-            <EditText
-                android:id="@+id/eFullName"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-
-                android:text="Address"
-                android:textColor="#ffffff"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:typeface="sans" />
-
-            <EditText
-                android:id="@+id/eAddress"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-
-                android:text="Phone Number"
-                android:textColor="#ffffff"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:typeface="sans" />
-
-            <EditText
-                android:id="@+id/ePhoneNumber"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layoutForm2"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/colorPrimaryDark"
-        android:layout_below="@+id/layoutForm1">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+        android:text="Upload your ID"
+        android:textColor="#ffffff"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:typeface="sans"
+        android:gravity="center" />
 
-            <TextView
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Upload your ID"
-                android:textColor="#ffffff"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:typeface="sans" />
+    <EditText
+        android:layout_weight="3"
+        android:hint="Full Name"
+        android:id="@+id/eFullName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-            <ImageView
-                android:id="@+id/image_view"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_menu_camera" />
+    <EditText
+        android:layout_weight="3"
+        android:hint="Address"
+        android:id="@+id/eAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
+    <EditText
+        android:layout_weight="3"
+        android:hint="Phone Number"
+        android:id="@+id/ePhoneNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-        </LinearLayout>
-    </LinearLayout>
+    <EditText
+        android:layout_weight="3"
+        android:hint="TODA"
+        android:id="@+id/eToda"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-    <LinearLayout
-        android:id="@+id/layoutForm3"
+    <EditText
+        android:layout_weight="3"
+        android:hint="Plate Number"
+        android:id="@+id/ePlateNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:layout_weight="3"
+        android:hint="Email"
+        android:layout_gravity="center"
+        android:id="@+id/eEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:layout_weight="3"
+        android:hint="Password"
+        android:layout_gravity="center"
+        android:id="@+id/mpassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/layoutForm2" >
+        android:inputType="textPassword" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="10sp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layoutForm4"
+    <EditText
+        android:layout_weight="3"
+        android:hint="Confirm Password"
+        android:layout_gravity="center"
+        android:id="@+id/mConfirmPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark"
-        android:orientation="vertical"
-        android:layout_below="@+id/layoutForm3">
+        android:inputType="textPassword" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/toda"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-
-                android:text="Toda"
-                android:textColor="#ffffff"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/eToda"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/plateNumber"
-                android:layout_width="78dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Plate Number"
-                android:textColor="#ffffff"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:typeface="sans" />
-
-            <EditText
-                android:id="@+id/ePlateNumber"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"/>
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layoutForm5"
+    <Button
+        android:id="@+id/button2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/layoutForm4" >
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="10sp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layoutForm6"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark"
-        android:orientation="vertical"
-        android:layout_below="@+id/layoutForm5">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/emailId"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-
-                android:text="Email"
-                android:textColor="#ffffff"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/eEmail"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/password"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Password"
-                android:textColor="#ffffff"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:typeface="sans" />
-
-            <EditText
-                android:id="@+id/mpassword"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:inputType="textPassword" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/confirmpassword"
-                android:layout_width="122dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Confirm Password"
-                android:textColor="#ffffff"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:typeface="sans" />
-
-            <EditText
-                android:id="@+id/mConfirmPassword"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:inputType="textPassword" />
-        </LinearLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/layoutForm6">
-
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:layout_alignParentBottom="true"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="167dp"
-                android:background="@color/blue"
-                android:text="SignUP"
-                android:textColor="#ffffff"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </RelativeLayout>
-
-    </LinearLayout>
-
-
-
-
-
-</RelativeLayout>
+        android:background="@color/blue"
+        android:text="SignUP"
+        android:textColor="#ffffff"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+</LinearLayout>

@@ -1,33 +1,38 @@
 package com.tukla.www.tukla;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
 public class Session {
 
-    private String driverID;
-    private String userID;
-    private String bookingID;
+    private User driver;
+    private Booking booking;
     private String startedAt;
     private LatLngDefined driverLocation;
     private Boolean isDriverArrived;
+    private Boolean isDone;
 
     public Session() {
 
     }
 
-    public Session(String driverID, String userID, String bookingID, String startedAt, LatLngDefined driverLocation, Boolean isDriverArrived) {
-        this.driverID = driverID;
-        this.userID = userID;
-        this.bookingID = bookingID;
+    public Session(User driver, Booking booking, String startedAt, LatLngDefined driverLocation, Boolean isDriverArrived, Boolean isDone) {
+        this.driver = driver;
+        this.booking = booking;
         this.startedAt = startedAt;
         this.driverLocation = driverLocation;
         this.isDriverArrived = isDriverArrived;
+        this.isDone = isDone;
     }
 
-    public String getDriverID() {
-        return this.driverID;
+    public User getDriver() {
+        return driver;
     }
 
-    public String getBookingID() {
-        return bookingID;
+    public Booking getBooking() {
+        return booking;
     }
 
     public Boolean getIsDriverArrived() {
@@ -42,7 +47,7 @@ public class Session {
         return startedAt;
     }
 
-    public String getUserID() {
-        return userID;
+    public Boolean getIsDone() {
+        return isDone;
     }
 }

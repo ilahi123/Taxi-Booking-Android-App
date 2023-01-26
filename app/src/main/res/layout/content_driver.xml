@@ -110,7 +110,6 @@
                                     android:hint="Your Current Location"
 
                                     android:maxLines="1"
-                                    android:onClick="myLocation"
                                     android:paddingLeft="@dimen/button_padding1"
                                     android:paddingTop="5dp"
                                     android:paddingBottom="5dp"

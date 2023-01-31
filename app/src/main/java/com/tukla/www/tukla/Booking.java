@@ -19,7 +19,7 @@ public class Booking implements Serializable {
     private String destinationText;
     private User user;
     private User driver;
-
+    private String note;
     public Booking() {
 
     }
@@ -36,7 +36,8 @@ public class Booking implements Serializable {
             double fare,
             double distance,
             String originText,
-            String destinationText) {
+            String destinationText,
+            String note) {
 
         this.bookingID = bookingID;
         this.user = user;
@@ -50,6 +51,7 @@ public class Booking implements Serializable {
         this.fare = fare;
         this.destinationText = destinationText;
         this.originText = originText;
+        this.note = note;
     }
 
     public String getBookingID() {
@@ -114,6 +116,10 @@ public class Booking implements Serializable {
 
     public void setIsArrived(Boolean status) {
         this.isArrived = status;
+    }
+
+    public String getNote() {
+        return note;
     }
 
 }

@@ -50,4 +50,12 @@ public class Session {
     public Boolean getIsDone() {
         return isDone;
     }
+
+    public boolean isDriverEmpty() {
+        return driver == null;
+    }
+
+    public boolean isBookingEmpty() {
+        return  booking == null;
+    }
 }

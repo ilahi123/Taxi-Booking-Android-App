@@ -1,13 +1,13 @@
 package com.tukla.www.tukla;
 
-import static com.tukla.www.tukla.R.id.custom;
 import static com.tukla.www.tukla.R.id.map;
-import static com.tukla.www.tukla.R.id.myLocation;
 import static com.tukla.www.tukla.R.id.nav_logOut;
+import static com.tukla.www.tukla.R.id.nav_profile;
 
 import android.Manifest;
 import android.app.Activity;
 import android.app.LoaderManager;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -32,7 +32,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
@@ -41,8 +40,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -75,17 +72,16 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -93,16 +89,13 @@ import com.google.firebase.storage.StorageReference;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.ref.Reference;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -131,7 +124,7 @@ public class MainActivity extends AppCompatActivity
 
     Geocoder geocoder;
     List<android.location.Address> addresses;
-    TextView txtDropOff;
+    EditText txtDropOff;
     TextView priceText;
     TextView distanceText;
     LatLng myPosition;
@@ -144,6 +137,8 @@ public class MainActivity extends AppCompatActivity
     private final String CODE_DRIVER_OK = "Driver Arrived";
     private final String CODE_SOS = "SOS";
     private final String CODE_DONE = "Done";
+
+    private Boolean isBookClicked = false;
     String recentBookingID;
     Marker driverMarker;
     Marker destinationMarker;
@@ -156,6 +151,13 @@ public class MainActivity extends AppCompatActivity
     Session thisSession;
     //CardView driver_info;
     NavigationView navigationView;
+    // Create a LatLngBounds object for Calamba, Laguna
+    final LatLngBounds calambaBounds = new LatLngBounds(
+            new LatLng(14.139585, 121.036924), // Southwest corner
+            new LatLng(14.241103070741213, 121.19193372793421) // Northeast corner
+    );
+    private Boolean isMapClick;
+    private String txtMyNote;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setupLocationManager();
@@ -183,7 +185,7 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById( R.id.nav_view );
         navigationView.setNavigationItemSelectedListener( this );
 
-        txtDropOff = (TextView) findViewById(R.id.txt_dropoff);
+        txtDropOff = (EditText) findViewById(R.id.txt_dropoff);
         //
         //Buttons Select Product option
         //select_btn = (ImageButton) findViewById( R.id.img_selected );
@@ -200,93 +202,52 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onClick(View v) {
+
                 // TODO Auto-generated method stub
+                final ProgressDialog pdialog = ProgressDialog.show(MainActivity.this, "",
+                        "Loggin in. Please wait...", true);
                 try {
                     if(book_button.getText().toString().equals(CODE_BOOK)) {
+
                         Address destinationResult = setDestination();
 
                         if(destinationResult!=null) {
-                            //driver_info.setVisibility(View.VISIBLE);
-                            mMap.clear();
-                            book_button.setText(CODE_CANCEL);
-                            book_button.setBackgroundColor(getColor(R.color.colorRed));
-                            String myDestination = destinationResult.getAddressLine(0);
-                            txtDropOff.setText(myDestination);
-                            myPosition = new LatLng(MainActivity.this.latitude,MainActivity.this.longitude);
 
-                            //positionUpdate = new LatLng( destinationResult.getLatitude(), destinationResult.getLongitude() );
-                            String directionUrl = getDirectionsUrl(myPosition,positionUpdate);
-
-                            //AsyncDirectionsAPI asyncDirectionsAPI = new AsyncDirectionsAPI();
-                            //asyncDirectionsAPI.execute(directionUrl);
-
-                            //double distanceVal = 2;
-                            // creating a new variable for our request queue
-                            RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-
-                            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, directionUrl, null, new Response.Listener<JSONObject>() {
-                                @Override
-                                public void onResponse(JSONObject response) {
-                                    try {
-                                        double distanceVal = 0;
-                                        // now we get our response from API in json object format.
-                                        // in below line we are extracting a string with its key
-                                        // value from our json object.
-                                        // similarly we are extracting all the strings from our json object.
-
-                                        JSONArray routesObjArray = response.getJSONArray("routes");
-                                        JSONObject distanceObj = routesObjArray.getJSONObject(0);
-
-                                        JSONArray c = distanceObj.getJSONArray("legs");
-                                        for (int i = 0 ; i < distanceObj.length(); i++) {
-                                            JSONObject obj = c.getJSONObject(i);
-                                            JSONObject distanceFinal =  obj.getJSONObject("distance");
-                                            distanceVal = distanceFinal.getDouble("value");
-                                            break;
-                                        }
-
-                                        displayFare(distanceVal);
-                                    } catch (JSONException e) {
-                                        // if we do not extract data from json object properly.
-                                        // below line of code is use to handle json exception
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }, new Response.ErrorListener() {
-                                // this is the error listener method which
-                                // we will call if we get any error from API.
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    // below line is use to display a toast message along with our error.
-                                    Toast.makeText(MainActivity.this, "Fail to get data..", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                            // at last we are adding our json
-                            // object request to our request
-                            // queue to fetch all the json data.
-                            queue.add(jsonObjectRequest);
-
-                            destinationMarker = mMap.addMarker(new MarkerOptions().position(positionUpdate)
-                                    .title("Destination")
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.finish_flag))
-                            );
-
-                            CameraUpdate update = CameraUpdateFactory.newLatLngZoom( positionUpdate, 15 );
-                            mMap.animateCamera(update);
+                            showCustomBookDialog(destinationResult.getAddressLine(0));
 
     //                        waitBookAccept();
 
+                        } else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                            builder.setTitle("No location found!");
+                            builder.setMessage("Please enter a location within Calamba, Laguna only.");
+                            AlertDialog dialog = builder.create();
+
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // Do something when the OK button is clicked
+                                    dialog.dismiss();
+                                }
+                            });
+                            mMap.clear();
+                            txtDropOff.setText("");
+                            dialog.show();
                         }
                     } else if(book_button.getText().toString().equals(CODE_CANCEL)){
                         //driver_info.setVisibility(View.GONE);
+                        isBookClicked = false;
                         mMap.clear();
                         book_button.setText(CODE_BOOK);
                         book_button.setBackgroundColor(getColor(R.color.green));
-
+                        txtDropOff.setEnabled(true);
+                        txtDropOff.setText("");
+                        priceText.setText("0.00");
+                        distanceText.setText("0");
                         FirebaseDatabase database = FirebaseDatabase.getInstance();
                         database.getReference("bookings").child(recentBookingID).removeValue();
-                    } else if (book_button.getText().equals(CODE_DRIVER_WAIT)) {
-                        Toast.makeText(getApplicationContext(), "Driver is on the way", Toast.LENGTH_SHORT);
+                    } else if (book_button.getText().equals(CODE_CANCEL)) {
+
                     } else if (book_button.getText().toString().equals(CODE_SOS)) {
                         // Check if app has permission to make phone calls
                         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -300,7 +261,33 @@ public class MainActivity extends AppCompatActivity
                     }
                 } catch (Exception e) {
                     Toast.makeText(getApplicationContext(),"An error occured! Try selecting another place.",Toast.LENGTH_SHORT);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("No location found!");
+                    builder.setMessage("Please enter a location within Calamba, Laguna only.");
+                    AlertDialog dialog = builder.create();
+
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Do something when the OK button is clicked
+                            dialog.dismiss();
+                        }
+                    });
+                    mMap.clear();
+                    txtDropOff.setText("");
+                    dialog.show();
+                } finally {
+                    pdialog.dismiss();
                 }
+            }
+        });
+
+        txtDropOff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMap.clear();
+                txtDropOff.setText("");
+                isMapClick=false;
             }
         });
 
@@ -327,10 +314,11 @@ public class MainActivity extends AppCompatActivity
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     for(DataSnapshot sessionSnap : dataSnapshot.getChildren()){
                                         Session sessionx = sessionSnap.getValue(Session.class);
-                                        if(sessionx.getBooking().getBookingID().equals(booking.getBookingID())) {
-                                            showCustomDialog(sessionx);
-                                            break;
-                                        }
+                                        if(!sessionx.isBookingEmpty())
+                                            if(sessionx.getBooking().getBookingID().equals(booking.getBookingID())) {
+                                                showCustomDialog(sessionx);
+                                                break;
+                                            }
                                     }
                                 }
 
@@ -350,7 +338,7 @@ public class MainActivity extends AppCompatActivity
 
                             intent.putExtra("BOOKING_ID", booking.getBookingID());
                             intent.putExtra("ROLE","PASSENGER");
-                            finish();
+                            //finish();
                             startActivity( intent );
                         }
                         break;
@@ -371,7 +359,9 @@ public class MainActivity extends AppCompatActivity
                 for(DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
 
                     Session mySession = sessionSnapshot.getValue(Session.class);
-                    if(mySession.getBooking().getBookingID().equals(recentBookingID)) {
+
+                    if(!mySession.isBookingEmpty())
+                        if(mySession.getBooking().getBookingID().equals(recentBookingID)) {
                         thisSession = mySession;
                         LatLng positionUpdate = new LatLng(mySession.getDriverLocation().getLatitude(),mySession.getDriverLocation().getLongitude());
                         driverMarker.remove();
@@ -412,7 +402,7 @@ public class MainActivity extends AppCompatActivity
                                 builder.setTitle("Your Driver is here!");
                                 builder.setMessage("I am about 15 meters away. My plate number is "+myBookingObj.getDriver().getDriver().getPlateNumber());
                                 AlertDialog dialog = builder.create();
-                                dialog.show();
+
                                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -420,44 +410,13 @@ public class MainActivity extends AppCompatActivity
                                         dialog.dismiss();
                                     }
                                 });
+                                dialog.show();
 
                             }
                         }
                         break;
                     }
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        mySessionsRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                Session session = dataSnapshot.getValue(Session.class);
-                if(session.getBooking().getBookingID().equals(recentBookingID)) {
-                    Toast.makeText(getBaseContext(), "Sorry, the driver cancelled your booking.", Toast.LENGTH_SHORT).show();
-                    finish();
-                    startActivity(getIntent());
-                }
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
@@ -536,6 +495,30 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer( GravityCompat.START );
         } else {
             super.onBackPressed();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Sign out?");
+            builder.setMessage("You have pressed back button. Are you signing out?");
+            AlertDialog dialog = builder.create();
+
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Do something when the OK button is clicked
+                    dialog.dismiss();
+                    FirebaseDatabase.getInstance().getReference("bookings").child(recentBookingID).removeValue();
+                    Intent intent =new Intent(MainActivity.this,Login.class);
+                    finish();
+                    startActivity(intent);
+                }
+            });
+
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
         }
     }
 
@@ -609,36 +592,26 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        if(isBookClicked)
+            FirebaseDatabase.getInstance().getReference().child("bookings").child(recentBookingID).removeValue();
+
         if(id==R.id.nav_history) {
+            //FirebaseDatabase.getInstance().getReference("bookings").child(recentBookingID).removeValue();
             Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
             intent.putExtra("ROLE","PASSENGER");
             startActivity(intent);
+            finish();
         } else if(id==nav_logOut) {
-            if(!recentBookingID.equals(null)) {
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                database.getReference("sessions").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for(DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
-                            Session session = sessionSnapshot.getValue(Session.class);
-                            if(session.getBooking().getBookingID().equals(recentBookingID)) {
-                                if(!session.getIsDone()) {
-                                    database.getReference("sessions").child(sessionSnapshot.getKey()).removeValue();
-                                    database.getReference("bookings").child(session.getBooking().getBookingID()).removeValue();
-                                }
-                            }
-                        }
-                    }
+            //FirebaseDatabase.getInstance().getReference("bookings").child(recentBookingID).removeValue();
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+            //FirebaseAuth.getInstance().signOut();
 
-                    }
-                });
-            }
-
-            FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(MainActivity.this, Login.class);
+            startActivity(intent);
+            finish();
+        } else if(id==nav_profile) {
+            //FirebaseDatabase.getInstance().getReference("bookings").child(recentBookingID).removeValue();
+            Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
             finish();
         }
@@ -682,12 +655,11 @@ public class MainActivity extends AppCompatActivity
         //This line will show your current location on Map with GPS dot
         mMap.setMyLocationEnabled( true );
         locationButton();
-/*
-        Toast.makeText( MainActivity.this, "OnStart:"+latitude+","+longitude, Toast.LENGTH_SHORT ).show();
-*/
+
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
+                isMapClick=true;
                 if(book_button.getText().toString().equals(CODE_BOOK)) {
                     try {
                         mMap.clear();
@@ -1070,15 +1042,27 @@ public class MainActivity extends AppCompatActivity
     }
 
     private Address setDestination() {
-        List<Address> addressList = null;
 
         try {
+            List<Address> addresses = new ArrayList<>();
            // addressList = geocoder.getFromLocationName(paramLocString,1);
-            addressList = geocoder.getFromLocation(destinationMarker.getPosition().latitude,destinationMarker.getPosition().longitude,1);
-            return addressList.get(0);
-
+            if(isMapClick) {
+                addresses = geocoder.getFromLocation(destinationMarker.getPosition().latitude,destinationMarker.getPosition().longitude,1);
+                //return addresses.get(0);
+            } else if(!txtDropOff.getText().toString().equals("")) {
+                addresses = geocoder.getFromLocationName(txtDropOff.getText().toString(),10);
+                positionUpdate= new LatLng(addresses.get(0).getLatitude(),addresses.get(0).getLongitude());
+                //return addresses.get(0);
+            }
+            for (Address address : addresses) {
+                LatLng location = new LatLng(address.getLatitude(), address.getLongitude());
+                if (calambaBounds.contains(location)) {
+                    return address;
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
         return null;
     }
@@ -1125,9 +1109,10 @@ public class MainActivity extends AppCompatActivity
         FirebaseDatabase database=FirebaseDatabase.getInstance();
         DatabaseReference myBookingsRef = database.getReference().child("bookings");
         recentBookingID = myBookingsRef.push().getKey();
+        isBookClicked = true;
         LatLngDefined l1 = new LatLngDefined(myPosition.latitude,myPosition.longitude);
         LatLngDefined l2 = new LatLngDefined(positionUpdate.latitude,positionUpdate.longitude);
-        myBookingObj = new Booking(recentBookingID,loggedInUser, null,LocalDateTime.now().toString(),l1,l2,false,false, paramFare, paramDistance,myCurrentloc.getText().toString(),txtDropOff.getText().toString());
+        myBookingObj = new Booking(recentBookingID,loggedInUser, null,LocalDateTime.now().toString(),l1,l2,false,false, paramFare, paramDistance,myCurrentloc.getText().toString(),txtDropOff.getText().toString(),txtMyNote);
         myBookingsRef.child(recentBookingID).setValue(myBookingObj);
     }
 
@@ -1162,6 +1147,9 @@ public class MainActivity extends AppCompatActivity
         TextView plateNum = dialogView.findViewById(R.id.marker_plate);
         plateNum.setText(mb.getDriver().getDriver().getPlateNumber());
 
+        TextView note = dialogView.findViewById(R.id.txtPassengerNote);
+        note.setText(mb.getBooking().getNote());
+
         Button button = dialogView.findViewById(R.id.marker_btn_accept);
 
         builder.setView(dialogView);
@@ -1172,6 +1160,117 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 // Handle button click event
+                dialog.dismiss();
+            }
+        });
+
+    }
+
+
+    private void showCustomBookDialog(String myDestination) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.add_note, null);
+
+        EditText note = dialogView.findViewById(R.id.txtNote);
+        Button button = dialogView.findViewById(R.id.customBtnBook);
+        Button button2 = dialogView.findViewById(R.id.customBtnCancel);
+
+        builder.setView(dialogView);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                txtMyNote = note.getText().toString();
+                mMap.clear();
+                book_button.setText(CODE_CANCEL);
+                book_button.setBackgroundColor(getColor(R.color.colorRed));
+
+                txtDropOff.setText(myDestination);
+                txtDropOff.setEnabled(false);
+                myPosition = new LatLng(MainActivity.this.latitude,MainActivity.this.longitude);
+
+                //positionUpdate = new LatLng( destinationResult.getLatitude(), destinationResult.getLongitude() );
+                String directionUrl = getDirectionsUrl(myPosition,positionUpdate);
+
+                //AsyncDirectionsAPI asyncDirectionsAPI = new AsyncDirectionsAPI();
+                //asyncDirectionsAPI.execute(directionUrl);
+
+                //double distanceVal = 2;
+                // creating a new variable for our request queue
+                RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, directionUrl, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            double distanceVal = 0;
+                            // now we get our response from API in json object format.
+                            // in below line we are extracting a string with its key
+                            // value from our json object.
+                            // similarly we are extracting all the strings from our json object.
+
+                            JSONArray routesObjArray = response.getJSONArray("routes");
+                            JSONObject distanceObj = routesObjArray.getJSONObject(0);
+
+                            JSONArray c = distanceObj.getJSONArray("legs");
+                            for (int i = 0 ; i < distanceObj.length(); i++) {
+                                JSONObject obj = c.getJSONObject(i);
+                                JSONObject distanceFinal =  obj.getJSONObject("distance");
+                                distanceVal = distanceFinal.getDouble("value");
+                                break;
+                            }
+
+                            displayFare(distanceVal);
+                        } catch (JSONException e) {
+                            // if we do not extract data from json object properly.
+                            // below line of code is use to handle json exception
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    // this is the error listener method which
+                    // we will call if we get any error from API.
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // below line is use to display a toast message along with our error.
+                        //Toast.makeText(MainActivity.this, "Fail to get data..", Toast.LENGTH_SHORT).show();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setTitle("No location found!");
+                        builder.setMessage("Please enter a location within Calamba, Laguna only.");
+                        AlertDialog dialog = builder.create();
+
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Do something when the OK button is clicked
+                                dialog.dismiss();
+                            }
+                        });
+                    }
+                });
+                // at last we are adding our json
+                // object request to our request
+                // queue to fetch all the json data.
+                queue.add(jsonObjectRequest);
+
+                destinationMarker = mMap.addMarker(new MarkerOptions().position(positionUpdate)
+                        .title("Destination")
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.finish_flag))
+                );
+
+                CameraUpdate update = CameraUpdateFactory.newLatLngZoom( positionUpdate, 15 );
+                mMap.animateCamera(update);
+            }
+        });
+
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle button click event
+                book_button.setText(CODE_BOOK);
                 dialog.dismiss();
             }
         });

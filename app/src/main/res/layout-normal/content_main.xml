@@ -178,8 +178,7 @@
 <!--                                    android:textColor="@color/colorFont"-->
 <!--                                    android:textSize="@dimen/nml_dv_txt"/>-->
 
-                                <TextView
-                                    android:editable="false"
+                                <EditText
                                     android:id="@+id/txt_dropoff"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"

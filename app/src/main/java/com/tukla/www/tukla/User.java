@@ -19,6 +19,7 @@ public class User {
     private String updatedAt;
     private Boolean isAdmin;
     private Driver driver;
+    private Boolean isRejected;
 
     public User(){
     }
@@ -32,7 +33,8 @@ public class User {
             Boolean isVerified,
             String updatedAt,
             Boolean isAdmin,
-            Driver driver) {
+            Driver driver,
+            Boolean isRejected) {
 
         this.userID = userID;
         this.fullname = fullname;
@@ -43,6 +45,7 @@ public class User {
         this.updatedAt = updatedAt;
         this.isAdmin = isAdmin;
         this.driver = driver;
+        this.isRejected = isRejected;
     }
 
     public String getUserID() {
@@ -89,4 +92,7 @@ public class User {
         return idImgUrl;
     }
 
+    public Boolean getIsRejected() {
+        return isRejected;
+    }
 }

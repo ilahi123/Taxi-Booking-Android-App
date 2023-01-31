@@ -27,10 +27,10 @@
 
     <item android:title="Settings">
         <menu>
-<!--            <item-->
-<!--                android:id="@+id/nav_share"-->
-<!--                android:icon="@drawable/ic_menu_share"-->
-<!--                android:title="Share" />-->
+            <item
+                android:id="@+id/nav_profile"
+                android:icon="@drawable/person"
+                android:title="Profile" />
             <item
                 android:id="@+id/nav_logOut"
                 android:icon="@drawable/ic_close_black_48dp"

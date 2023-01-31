@@ -1,20 +1,20 @@
 package com.tukla.www.tukla;
 
 import static com.tukla.www.tukla.R.id.nav_logOut;
+import static com.tukla.www.tukla.R.id.nav_profile;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.HorizontalScrollView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -23,7 +23,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -108,10 +107,6 @@ public class HistoryActivity extends AppCompatActivity implements NavigationView
                 listHistory.clear();
                 for (DataSnapshot historySnapshot : dataSnapshot.getChildren()) {
                     History history = historySnapshot.getValue(History.class);
-                    Log.d("TAG HISTORY",history.getSession().toString());
-                    Log.d("AUTH", mAuth.getUid());
-                    Log.d("TAG HISTORY DRIVER", history.getSession().getDriver().getUserID());
-                    Log.d("TAG HISTORY USER", history.getSession().getBooking().getUser().getUserID());
                     if(role.equals("DRIVER")) {
                         if(history.getSession().getDriver().getUserID().equals(mAuth.getUid()))
                             listHistory.add(history);
@@ -145,10 +140,13 @@ public class HistoryActivity extends AppCompatActivity implements NavigationView
                 intent = new Intent(this, DriverActivity.class);
             startActivity(intent);
         } else if(id==nav_logOut) {
-            FirebaseAuth.getInstance().signOut();
+            //FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(this, Login.class);
-            startActivity(intent);
             finish();
+            startActivity(intent);
+        } else if(id==nav_profile) {
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
         }
 
         return false;

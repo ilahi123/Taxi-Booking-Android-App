@@ -1,37 +1,41 @@
 package com.tukla.www.tukla;
-        import android.app.ProgressDialog;
-        import android.content.DialogInterface;
-        import android.content.Intent;
-        import android.graphics.Bitmap;
-        import android.net.Uri;
-        import android.provider.MediaStore;
-        import android.support.annotation.NonNull;
-        import android.support.v7.app.AppCompatActivity;
-        import android.os.Bundle;
-        import android.util.Log;
-        import android.view.View;
-        import android.widget.Button;
-        import android.widget.EditText;
-        import android.widget.ImageView;
-        import android.widget.Toast;
 
-        import com.google.android.gms.tasks.OnCompleteListener;
-        import com.google.android.gms.tasks.OnFailureListener;
-        import com.google.android.gms.tasks.OnSuccessListener;
-        import com.google.android.gms.tasks.Task;
-        import com.google.firebase.auth.AuthResult;
-        import com.google.firebase.auth.FirebaseAuth;
-        import com.google.firebase.auth.FirebaseUser;
-        import com.google.firebase.database.DatabaseReference;
-        import com.google.firebase.database.FirebaseDatabase;
-        import com.google.firebase.storage.FirebaseStorage;
-        import com.google.firebase.storage.StorageReference;
-        import com.google.firebase.storage.UploadTask;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
-        import java.io.ByteArrayOutputStream;
-        import java.io.File;
-        import java.io.IOException;
-        import java.time.LocalDateTime;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.time.LocalDateTime;
 
 public class SignUpDriver extends AppCompatActivity {
 
@@ -46,8 +50,13 @@ public class SignUpDriver extends AppCompatActivity {
     private EditText ePlateNumber;
     private Button mButton;
     private FirebaseAuth mAuth;
-    private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int PICK_PROF_PIC_REQUEST = 1;
+    private static final int PICK_ID_REQUEST = 2;
+    private Bitmap PICBitmap;
     private Bitmap IDBitmap;
+    private ImageView imgLicense;
+    private Boolean isWithProfPic=false;
+    private Boolean isWithLicense=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +73,41 @@ public class SignUpDriver extends AppCompatActivity {
         mconfirmpassword=findViewById(R.id.mConfirmPassword);
         eToda=findViewById(R.id.eToda);
         ePlateNumber=findViewById(R.id.ePlateNumber);
-
         mButton=findViewById(R.id.button2);
+        imgLicense=findViewById(R.id.img_license);
+        CheckBox showHideCheckBox1 = findViewById(R.id.show_hide_checkbox_1);
+        CheckBox showHideCheckBox2 = findViewById(R.id.show_hide_checkbox_2);
+
+        showHideCheckBox1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // show password
+                    mpassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                } else {
+                    // hide password
+                    mpassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                }
+                // move cursor to end of text
+                mpassword.setSelection(mpassword.length());
+            }
+        });
+
+        showHideCheckBox2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // show password
+                    mconfirmpassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                } else {
+                    // hide password
+                    mconfirmpassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                }
+                // move cursor to end of text
+                mconfirmpassword.setSelection(mconfirmpassword.length());
+            }
+        });
+
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,7 +119,15 @@ public class SignUpDriver extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent pickImageIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(pickImageIntent, PICK_IMAGE_REQUEST);
+                startActivityForResult(pickImageIntent, PICK_PROF_PIC_REQUEST);
+            }
+        });
+
+        imgLicense.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent pickImageIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(pickImageIntent, PICK_ID_REQUEST);
             }
         });
 
@@ -87,7 +137,14 @@ public class SignUpDriver extends AppCompatActivity {
         email_id.setError(null);
         mpassword.setError(null);
 
-        if(!email.contains("@"))
+        if(!isWithProfPic) {
+            showErrorDailog("Image is required!", 0);
+            imgViewId.requestFocus();
+        } else if(!isWithLicense) {
+            showErrorDailog("License ID is required!", 0);
+            imgLicense.requestFocus();
+
+        } else if(!email.contains("@"))
         {
             email_id.requestFocus();
             email_id.setError("INVALID EMAIL");
@@ -146,7 +203,7 @@ public class SignUpDriver extends AppCompatActivity {
 
                         if (task.isSuccessful()) {
                             dialog.dismiss();
-                            showErrorDailog("Succesfully Registered. Once the Admin verifies your account, you can now log in. Thank you!");
+                            showErrorDailog("Succesfully Registered. Once the Admin verifies your account, you can now log in. Thank you!",1);
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             updateDatabase();
                             //UpdateUI(firebaseUser);
@@ -164,7 +221,8 @@ public class SignUpDriver extends AppCompatActivity {
     private void updateDatabase() {
 
         try {
-            uploadFirebase(IDBitmap);
+            uploadFirebase(IDBitmap,"licenses");
+            uploadFirebase(PICBitmap,"images");
         } catch (Exception e) {
 
         } finally {
@@ -172,7 +230,7 @@ public class SignUpDriver extends AppCompatActivity {
 
             DatabaseReference myRefUsers = database.getReference("users");
             Driver driver = new Driver(eToda.getText().toString(),ePlateNumber.getText().toString());
-            User user = new User(mAuth.getUid(),eFullName.getText().toString(),eAddress.getText().toString(),ePhoneNumber.getText().toString(),true, false, LocalDateTime.now().toString(),false, driver);
+            User user = new User(mAuth.getUid(),eFullName.getText().toString(),eAddress.getText().toString(),ePhoneNumber.getText().toString(),true, false, LocalDateTime.now().toString(),false, driver,false);
             myRefUsers.child(mAuth.getUid()).setValue(user);
 
 
@@ -180,16 +238,20 @@ public class SignUpDriver extends AppCompatActivity {
 
     }
 
-    private  void showErrorDailog(String message)
+    private  void showErrorDailog(String message, int type)
     {
-        new android.support.v7.app.AlertDialog.Builder(this)
+        AlertDialog dialog =  new android.support.v7.app.AlertDialog.Builder(this)
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent =new Intent(SignUpDriver.this,Login.class);
-                        finish();
-                        startActivity(intent);
+                        if(type==1) {
+                            Intent intent =new Intent(SignUpDriver.this,Login.class);
+                            finish();
+                            startActivity(intent);
+                        } else
+                            dialog.dismiss();
+
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -201,7 +263,21 @@ public class SignUpDriver extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+        if (requestCode == PICK_ID_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri filePath = data.getData();
+            try {
+                //getting bitmap object from uri
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                //setting the image to imageview
+                imgLicense.setImageBitmap(bitmap);
+                // uploading the image to firebase
+                //uploadFirebase(bitmap);
+                IDBitmap = bitmap;
+                isWithProfPic=true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else if (requestCode == PICK_PROF_PIC_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri filePath = data.getData();
             try {
                 //getting bitmap object from uri
@@ -210,19 +286,20 @@ public class SignUpDriver extends AppCompatActivity {
                 imgViewId.setImageBitmap(bitmap);
                 // uploading the image to firebase
                 //uploadFirebase(bitmap);
-                IDBitmap = bitmap;
+                PICBitmap = bitmap;
+                isWithLicense=true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void uploadFirebase(Bitmap bitmap) {
+    private void uploadFirebase(Bitmap bitmap,String path) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
         String userId =  mAuth.getCurrentUser().getUid();
         // Create a reference to "images/userId.jpg"
-        StorageReference imageRef = storageRef.child("images/"+userId+".jpg");
+        StorageReference imageRef = storageRef.child(path+"/"+userId+".jpg");
 
         // Convert the bitmap to a byte array
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -255,5 +332,15 @@ public class SignUpDriver extends AppCompatActivity {
 //                myRef.child(key).setValue(user);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        // code here to show dialog
+        super.onBackPressed();  // optional depending on your needs
+        Intent intent =new Intent(SignUpDriver.this,Login.class);
+        finish();
+        startActivity(intent);
     }
 }

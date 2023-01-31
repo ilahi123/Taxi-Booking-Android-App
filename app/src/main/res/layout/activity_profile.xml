@@ -4,18 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
     tools:context=".SignUp"
     android:background="@drawable/side_nav_bar"
     android:orientation="vertical">
     <ScrollView
+
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <android.support.v7.widget.LinearLayoutCompat
+            android:background="@color/white"
+            android:layout_margin="10dp"
+            android:padding="25dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_if_rejected"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="18dp"
+                android:textColor="@color/colorRed"
+                android:text="Please upload your License!" />
 
             <TextView
                 android:textAlignment="center"
@@ -23,8 +37,8 @@
                 android:layout_height="wrap_content"
                 android:textSize="26dp"
                 android:textStyle="bold"
-                android:textColor="@color/white"
-                android:text="SIGN UP"
+                android:textColor="@color/green"
+                android:text="PROFILE"
                 android:layout_marginBottom="10dp"/>
 
             <ImageView
@@ -65,18 +79,21 @@
                 android:layout_height="wrap_content" />
 
             <EditText
+                android:visibility="gone"
                 android:hint="TODA"
                 android:id="@+id/eToda"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <EditText
+                android:visibility="gone"
                 android:hint="Plate Number"
                 android:id="@+id/ePlateNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <EditText
+                android:editable="false"
                 android:hint="Email"
                 android:layout_gravity="center"
                 android:id="@+id/eEmail"
@@ -112,6 +129,7 @@
                 android:textSize="10sp" />
 
             <ImageView
+                android:visibility="gone"
                 android:id="@+id/img_license"
                 android:layout_marginTop="10dp"
                 android:padding="10dp"
@@ -121,16 +139,36 @@
                 android:layout_weight="25"
                 android:src="@drawable/upload_id" />
 
-            <Button
-                android:layout_marginTop="10dp"
-                android:id="@+id/button2"
+            <android.support.v7.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/blue"
-                android:text="SignUP"
-                android:textColor="#ffffff"
-                android:textSize="18dp"
-                android:textStyle="bold" />
+                android:orientation="horizontal">
+                <Button
+                    android:layout_margin="10dp"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/button2"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@color/green"
+                    android:text="Save"
+                    android:textColor="#ffffff"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:layout_margin="10dp"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/button3"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorRed"
+                    android:text="Cancel"
+                    android:textColor="#ffffff"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+            </android.support.v7.widget.LinearLayoutCompat>
 
         </android.support.v7.widget.LinearLayoutCompat>
     </ScrollView>

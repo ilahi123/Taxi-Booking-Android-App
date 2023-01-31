@@ -5,17 +5,15 @@ public class History {
     private Session session;
     private double fare;
     private String updatedAt;
-    private String feedback;
 
     public History() {
 
     }
 
-    public History(Session session, double fare, String feedback, String updatedAt) {
+    public History(Session session, double fare, String updatedAt) {
         this.session = session;
         this.fare = fare;
         this.updatedAt = updatedAt;
-        this.feedback = feedback;
     }
 
     public Session getSession() {
@@ -30,7 +28,4 @@ public class History {
         return updatedAt;
     }
 
-    public String getFeedback() {
-        return feedback;
-    }
 }

@@ -1,24 +1,20 @@
 package com.tukla.www.tukla;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,18 +24,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 public class Login extends AppCompatActivity implements Serializable {
 
@@ -49,7 +35,7 @@ public class Login extends AppCompatActivity implements Serializable {
     private EditText email;
     private EditText password;
     private Button SignupDriver;
-
+    private CheckBox showHideCheckBox1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +47,22 @@ public class Login extends AppCompatActivity implements Serializable {
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         mAuth = FirebaseAuth.getInstance();
+        showHideCheckBox1 = findViewById(R.id.show_hide_checkbox_1);
 
+        showHideCheckBox1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // show password
+                    password.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                } else {
+                    // hide password
+                    password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                }
+                // move cursor to end of text
+                password.setSelection(password.length());
+            }
+        });
 
         Signup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,7 +112,7 @@ public class Login extends AppCompatActivity implements Serializable {
         }
         else{
 
-            if(Password.length()<=6)
+            if(Password.length()<6)
             {
                 password.requestFocus();
                 password.setError("Incorrect Pasword");
@@ -138,6 +139,8 @@ public class Login extends AppCompatActivity implements Serializable {
 
 
     private void Login(String email, String password) {
+        final ProgressDialog dialog = ProgressDialog.show(Login.this, "",
+                "Loggin in. Please wait...", true);
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -156,6 +159,10 @@ public class Login extends AppCompatActivity implements Serializable {
                                         intent = new Intent(Login.this, AdminActivity.class);
                                         finish();
                                         startActivity(intent);
+                                    } else if(user.getIsRejected()) {
+                                        intent = new Intent(Login.this, ProfileActivity.class);
+                                        finish();
+                                        startActivity(intent);
                                     } else if(user.getIsVerified()) {
                                         if(user.getIsDriver()) {
                                             intent = new Intent(Login.this, DriverActivity.class);
@@ -171,21 +178,21 @@ public class Login extends AppCompatActivity implements Serializable {
                                         Toast.makeText(getApplicationContext(), "You are not verified!", Toast.LENGTH_SHORT)
                                                 .show();
                                     }
+                                    dialog.dismiss();
                                 }
 
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                                    dialog.dismiss();
                                 }
                             });
 
                         } else {
-                            Log.d("vehicle", "UNsuccesful sign in");
+                            Log.d("vehicle", "Unsuccesful sign in");
                             Toast.makeText(getApplicationContext(), "Unsuccesful Sign in", Toast.LENGTH_SHORT)
                                     .show();
                             UpdateUI(null);
-
-
+                            dialog.dismiss();
                         }
                     }
                 });

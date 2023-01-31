@@ -11,10 +11,26 @@
     tools:context=".AdminActivity"
     tools:showIn="@layout/app_bar_admin">
 
-    <ListView
-        android:id="@+id/list_user"
+    <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/user_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search Name"
+            android:textSize="18dp"
+            />
+
+        <ListView
+            android:id="@+id/list_user"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v7.widget.LinearLayoutCompat>
+
 
 </FrameLayout>
 

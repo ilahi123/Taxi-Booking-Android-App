@@ -2,7 +2,7 @@ package com.tukla.www.tukla;
 
 import static com.tukla.www.tukla.R.id.map;
 import static com.tukla.www.tukla.R.id.nav_logOut;
-import static com.tukla.www.tukla.R.id.start;
+import static com.tukla.www.tukla.R.id.nav_profile;
 
 import android.Manifest;
 import android.app.Activity;
@@ -13,7 +13,6 @@ import android.content.IntentSender;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.icu.util.Freezable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -38,19 +37,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -78,7 +70,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -86,11 +77,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -151,6 +137,7 @@ public class DriverActivity extends AppCompatActivity
     List<Marker> bookingMarkers = new ArrayList<>();
     Session thisSession;
     NavigationView navigationView;
+    Boolean isAccepted = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setupLocationManager();
@@ -209,20 +196,23 @@ public class DriverActivity extends AppCompatActivity
                     Intent intent = new Intent( DriverActivity.this, DoneActivity.class );
                     intent.putExtra("BOOKING_ID", thisSession.getBooking().getBookingID());
                     intent.putExtra("ROLE","DRIVER");
-                    finish();
                     startActivity( intent );
                 } else if(book_button.getText().toString().equals(CODE_CANCEL)) {
                     mMap.clear();
                     layoutDetails.setVisibility(View.GONE);
 
 //                    if(!sessionID.equals(null)) {
-//                        DatabaseReference sessionsRef = database.getReference("sessions");
-//                        sessionsRef.child(sessionID).removeValue();
-//
-//                        DatabaseReference bookingsRef = database.getReference("bookings");
-//                        bookingsRef.child(clickedBookingID).child("isArrived").setValue(false);
-//                        bookingsRef.child(clickedBookingID).child("driver").removeValue();
-//                        bookingsRef.child(clickedBookingID).child("isAccepted").setValue(false);
+                        DatabaseReference sessionsRef = database.getReference("sessions");
+                        sessionsRef.child(sessionID).removeValue();
+
+//                        HashMap<String, Object> driverUpdates =  new HashMap();
+//                        driverUpdates.put("isArrived",false);
+//                        driverUpdates.put("isAccepted",false);
+//                        driverUpdates.put("driver",  null);
+//                        database.getReference("bookings").child(clickedBookingID).updateChildren(driverUpdates);
+                        database.getReference("bookings").child(clickedBookingID).removeValue();
+                        clickedBookingID = null;
+                        isAccepted=false;
 //                    }
                     addBookingsMarkers();
 
@@ -265,55 +255,23 @@ public class DriverActivity extends AppCompatActivity
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
                     Session mySession = sessionSnapshot.getValue(Session.class);
-                    if(mySession.getBooking().getBookingID().equals(clickedBookingID)) {
-                        thisSession = mySession;
-                        if(mySession.getIsDriverArrived()) {
-                            targetDestination = new LatLng(
-                                    mySession.getBooking().getDestination().getLatitude(),
-                                    mySession.getBooking().getDestination().getLongitude()
-                            );
-                            mMap.clear();
-                            addMarker(targetDestination, mySession.getBooking(),2);
-                            book_button.setText(CODE_DONE);
-                            book_button.setBackgroundColor(getColor(R.color.green));
-                            book_button.setVisibility(View.VISIBLE);
-
+                    if(!mySession.isBookingEmpty())
+                        if(mySession.getBooking().getBookingID().equals(clickedBookingID)) {
+                            thisSession = mySession;
+                            if(mySession.getIsDriverArrived()) {
+                                targetDestination = new LatLng(
+                                        mySession.getBooking().getDestination().getLatitude(),
+                                        mySession.getBooking().getDestination().getLongitude()
+                                );
+                                mMap.clear();
+                                addMarker(targetDestination, mySession.getBooking(),2);
+                                book_button.setText(CODE_DONE);
+                                book_button.setBackgroundColor(getColor(R.color.green));
+                                book_button.setVisibility(View.VISIBLE);
+                                break;
+                            }
                         }
-                    }
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        sessionRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                if(!clickedBookingID.equals("") || !clickedBookingID.equals(null)) {
-                    if(dataSnapshot.getKey().equals(clickedBookingID)) {
-                        Toast.makeText(getBaseContext(), "Passenger just cancelled the booking request", Toast.LENGTH_SHORT).show();
-                        finish();
-                        startActivity(getIntent());
-                    }
-                }
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
@@ -422,6 +380,29 @@ public class DriverActivity extends AppCompatActivity
             drawer.closeDrawer( GravityCompat.START );
         } else {
             super.onBackPressed();
+            AlertDialog.Builder builder = new AlertDialog.Builder(DriverActivity.this);
+            builder.setTitle("Sign out?");
+            builder.setMessage("You have pressed back button. Are you signing out?");
+            AlertDialog dialog = builder.create();
+
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Do something when the OK button is clicked
+                    dialog.dismiss();
+                    FirebaseDatabase.getInstance().getReference("bookings").child(clickedBookingID).removeValue();
+                    Intent intent =new Intent(DriverActivity.this,Login.class);
+                    finish();
+                    startActivity(intent);
+                }
+            });
+
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
         }
     }
 
@@ -493,12 +474,20 @@ public class DriverActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if(id==R.id.nav_history) {
+            //FirebaseDatabase.getInstance().getReference("bookings").child(clickedBookingID).removeValue();
             Intent intent = new Intent(this, HistoryActivity.class);
             intent.putExtra("ROLE","DRIVER");
             startActivity(intent);
+            finish();
         } else if(id==nav_logOut) {
-            FirebaseAuth.getInstance().signOut();
+            //FirebaseAuth.getInstance().signOut();
+            //FirebaseDatabase.getInstance().getReference("bookings").child(clickedBookingID).removeValue();
             Intent intent = new Intent(this, Login.class);
+            startActivity(intent);
+            finish();
+        } else if(id==nav_profile) {
+            //FirebaseDatabase.getInstance().getReference("bookings").child(clickedBookingID).removeValue();
+            Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
             finish();
         }
@@ -561,7 +550,6 @@ public class DriverActivity extends AppCompatActivity
             @Override
             public boolean onMarkerClick(Marker marker) {
 
-
                 if(marker.getTag()==null)
                     return false;
 //                if(!hashMapBookings.containsKey(marker.getTitle()))
@@ -571,6 +559,17 @@ public class DriverActivity extends AppCompatActivity
 
                 Booking booking = (Booking) marker.getTag();
                 Log.d("MARKER TAG", booking.toString());
+
+
+                if(book_button.getText().toString().equals(CODE_DONE)) {
+                    mMap.clear();
+                    passengerDestinationMarker = mMap.addMarker(new MarkerOptions()
+                            .title(booking.getDestinationText())
+                            .position(
+                                    new LatLng(booking.getDestination().getLatitude(),booking.getDestination().getLongitude())
+                            ).icon(BitmapDescriptorFactory.fromResource(R.drawable.finish_flag)));
+                    return false;
+                }
 
                 layoutDetails.setVisibility(View.VISIBLE);
 
@@ -651,16 +650,21 @@ public class DriverActivity extends AppCompatActivity
         TextView phone = dialogView.findViewById(R.id.marker_phone_number);
         phone.setText(mb.getUser().getPhone());
 
+        TextView note = dialogView.findViewById(R.id.txtPassengerNote);
+        note.setText(mb.getNote());
+
         Button button1 = dialogView.findViewById(R.id.marker_btn_accept);
         button1.setText("Accept");
 
         Button button2 = dialogView.findViewById(R.id.marker_btn_cancel);
         button2.setVisibility(View.VISIBLE);
 
-        if(mb.getIsAccepted()) {
+        Button button3 = dialogView.findViewById(R.id.marker_btn_ok);
+
+        if(isAccepted) {
             button1.setVisibility(View.GONE);
-            button2.setBackgroundColor(getColor(R.color.green));
-            button2.setText("OK");
+            button2.setVisibility(View.GONE);
+            button3.setVisibility(View.VISIBLE);
         }
 
         builder.setView(dialogView);
@@ -672,6 +676,7 @@ public class DriverActivity extends AppCompatActivity
             public void onClick(View v) {
                 // Handle button click event
                 mMap.clear();
+                isAccepted=true;
                 book_button.setText(CODE_CANCEL);
                 book_button.setBackgroundColor(getColor(R.color.colorRed));
                 acceptButton.setVisibility(View.GONE);
@@ -735,6 +740,13 @@ public class DriverActivity extends AppCompatActivity
                 LatLng positionUpdate = new LatLng( DriverActivity.this.latitude,DriverActivity.this.longitude );
                 CameraUpdate update = CameraUpdateFactory.newLatLngZoom( positionUpdate, 15 );
                 mMap.animateCamera( update );
+                dialog.dismiss();
+            }
+        });
+
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 dialog.dismiss();
             }
         });

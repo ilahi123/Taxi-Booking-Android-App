@@ -1,16 +1,21 @@
 package com.tukla.www.tukla;
+
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -29,11 +34,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Locale;
 
 public class SignUp extends AppCompatActivity {
 
@@ -48,9 +50,10 @@ public class SignUp extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private static final int PICK_IMAGE_REQUEST = 1;
     private Bitmap IDBitmap;
+    private Boolean isWithImg = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         String signUpVal = getIntent().getStringExtra("SIGN_UP_VAL");
         setContentView(R.layout.activity_sign_up);
@@ -63,8 +66,40 @@ public class SignUp extends AppCompatActivity {
         email_id=findViewById(R.id.eEmail);
         mpassword=findViewById(R.id.mpassword);
         mconfirmpassword=findViewById(R.id.mConfirmPassword);
-
         mButton=findViewById(R.id.button2);
+        CheckBox showHideCheckBox1 = findViewById(R.id.show_hide_checkbox_1);
+        CheckBox showHideCheckBox2 = findViewById(R.id.show_hide_checkbox_2);
+
+        showHideCheckBox1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // show password
+                    mpassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                } else {
+                    // hide password
+                    mpassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                }
+                // move cursor to end of text
+                mpassword.setSelection(mpassword.length());
+            }
+        });
+
+        showHideCheckBox2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // show password
+                    mconfirmpassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                } else {
+                    // hide password
+                    mconfirmpassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                }
+                // move cursor to end of text
+                mconfirmpassword.setSelection(mconfirmpassword.length());
+            }
+        });
+
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,27 +121,19 @@ public class SignUp extends AppCompatActivity {
         email_id.setError(null);
         mpassword.setError(null);
 
-        if(!email.contains("@"))
-        {
-            email_id.requestFocus();
-            email_id.setError("INVALID EMAIL");
-        }
-        else{
-            if(imgViewId.getDrawable() == null) {
+
+            if(!isWithImg)
+            {
                 Toast.makeText(getApplicationContext(), "ID is required!", Toast.LENGTH_SHORT).show();
-
-            } else if(password.length()<6)
+                AlertDialog.Builder builder = new AlertDialog.Builder(SignUp.this);
+                builder.setTitle("ID is required!");
+                builder.setMessage("Please upload an image of your ID.");
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            } else if(eFullName.getText().toString().equals(""))
             {
-                mpassword.requestFocus();
-                mpassword.setError("Password must be at least 6 characters long");
-            }
-
-            else if(!mconfirmpassword.getText().toString().equals(password))
-            {
-                mconfirmpassword.requestFocus();
-                mconfirmpassword.setError("Password does not match");
-
-
+                eFullName.requestFocus();
+                eFullName.setError("Enter Name");
             }
             else if(eAddress.getText().toString().equals(""))
             {
@@ -118,12 +145,25 @@ public class SignUp extends AppCompatActivity {
                 ePhoneNumber.requestFocus();
                 ePhoneNumber.setError("Phone Number cannot be empty");
             }
-
-            else{
-                registerUser(email,password);
+            else if(!email.contains("@"))
+            {
+                email_id.requestFocus();
+                email_id.setError("Invalid Email");
+            } else if(password.length()<6)
+            {
+                mpassword.requestFocus();
+                mpassword.setError("Password must be at least 6 characters long");
             }
 
-        }
+            else if(!mconfirmpassword.getText().toString().equals(password))
+            {
+                mconfirmpassword.requestFocus();
+                mconfirmpassword.setError("Password does not match");
+
+            }
+            else {
+                registerUser(email,password);
+            }
 
     }
 
@@ -164,7 +204,7 @@ public class SignUp extends AppCompatActivity {
         } catch (Exception e) {
 
         } finally {
-            User user = new User(mAuth.getUid(),eFullName.getText().toString(),eAddress.getText().toString(),ePhoneNumber.getText().toString(),false, true, LocalDateTime.now().toString(),false,null);
+            User user = new User(mAuth.getUid(),eFullName.getText().toString(),eAddress.getText().toString(),ePhoneNumber.getText().toString(),false, true, LocalDateTime.now().toString(),false,null,false);
             myRef.child(mAuth.getUid()).setValue(user);
         }
 
@@ -201,6 +241,7 @@ public class SignUp extends AppCompatActivity {
                 // uploading the image to firebase
                 //uploadFirebase(bitmap);
                 IDBitmap = bitmap;
+                isWithImg = true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -245,5 +286,14 @@ public class SignUp extends AppCompatActivity {
 //                myRef.child(key).setValue(user);
             }
         });
+    }
+    @Override
+    public void onBackPressed()
+    {
+        // code here to show dialog
+        super.onBackPressed();  // optional depending on your needs
+        Intent intent =new Intent(SignUp.this,Login.class);
+        finish();
+        startActivity(intent);
     }
 }

@@ -560,6 +560,7 @@ public class DriverActivity extends AppCompatActivity
                 Booking booking = (Booking) marker.getTag();
                 Log.d("MARKER TAG", booking.toString());
 
+                FirebaseDatabase.getInstance().getReference().child("bookings").child(booking.getBookingID()).child("isClicked").setValue(true);
 
                 if(book_button.getText().toString().equals(CODE_DONE)) {
                     mMap.clear();
@@ -682,17 +683,22 @@ public class DriverActivity extends AppCompatActivity
                 acceptButton.setVisibility(View.GONE);
 
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference bookingsRef = database.getReference("bookings");
-                bookingsRef.child(clickedBookingID).child("isAccepted").setValue(true);
-                bookingsRef.child(clickedBookingID).child("driver").setValue(loggedInDriverObj);
+                DatabaseReference bookingsRef = database.getReference().child("bookings").child(clickedBookingID);
+
+                HashMap<String, Object> bookingUpdates = new HashMap<>();
+                bookingUpdates.put("isAccepted",true);
+                bookingUpdates.put("driver",loggedInDriverObj);
+                //bookingsRef.child(clickedBookingID).child("isAccepted").setValue(true);
+                //bookingsRef.child(clickedBookingID).child("driver").setValue(loggedInDriverObj);
                 //bookingsRef.child(clickedBookingID).child("driverLocation").setValue(new LatLngDefined(DriverActivity.this.latitude,DriverActivity.this.longitude));
+                bookingsRef.updateChildren(bookingUpdates);
 
                 DatabaseReference sessionsRef = database.getReference("sessions");
-                sessionID = sessionsRef.push().getKey();
+                sessionID = clickedBookingID;
                 LatLngDefined myLocNow = new LatLngDefined(DriverActivity.this.latitude,DriverActivity.this.longitude);
                 Session sessionObj = new Session(
                         loggedInDriverObj,
-                        hashMapBookings.get(clickedBookingID),
+                        mb,
                         LocalDateTime.now().toString(),
                         myLocNow,
                         false,
@@ -733,6 +739,7 @@ public class DriverActivity extends AppCompatActivity
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                FirebaseDatabase.getInstance().getReference().child("bookings").child(clickedBookingID).child("isClicked").setValue(false);
                 mMap.clear();
                 layoutDetails.setVisibility(View.GONE);
                 addBookingsMarkers();
@@ -747,6 +754,7 @@ public class DriverActivity extends AppCompatActivity
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                FirebaseDatabase.getInstance().getReference().child("bookings").child(clickedBookingID).child("isClicked").setValue(false);
                 dialog.dismiss();
             }
         });
@@ -1170,23 +1178,25 @@ public class DriverActivity extends AppCompatActivity
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 //mMap.clear();
-                removeBookingMarkers();
-                bookingMarkers.clear();
-                hashMapBookings.clear();
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
-                    String key = childSnapshot.getKey();
-                    Booking booking = childSnapshot.getValue(Booking.class);
+                if(!isAccepted) {
+                    removeBookingMarkers();
+                    bookingMarkers.clear();
+                    hashMapBookings.clear();
+                    for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+                        String key = childSnapshot.getKey();
+                        Booking booking = childSnapshot.getValue(Booking.class);
 
-                    if(!booking.equals(null) && !booking.getIsAccepted()) {
-                        hashMapBookings.put(key, booking);
-                        Marker bm = addMarker(
-                                new LatLng(
-                                        booking.getOrigin().getLatitude(),
-                                        booking.getOrigin().getLongitude()
-                                ), booking, 1
-                        );
-                        bm.setTag(booking);
-                        bookingMarkers.add(bm);
+                        if(!booking.equals(null) && !booking.getIsAccepted() && !booking.getIsClicked()) {
+                            hashMapBookings.put(key, booking);
+                            Marker bm = addMarker(
+                                    new LatLng(
+                                            booking.getOrigin().getLatitude(),
+                                            booking.getOrigin().getLongitude()
+                                    ), booking, 1
+                            );
+                            bm.setTag(booking);
+                            bookingMarkers.add(bm);
+                        }
                     }
                 }
             }

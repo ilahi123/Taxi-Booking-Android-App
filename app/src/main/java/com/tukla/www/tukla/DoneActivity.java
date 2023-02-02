@@ -19,6 +19,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DoneActivity extends AppCompatActivity implements Serializable {
 
@@ -46,100 +48,91 @@ public class DoneActivity extends AppCompatActivity implements Serializable {
         //FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference("bookings").addListenerForSingleValueEvent(new ValueEventListener() {
+        database.getReference().child("bookings").child(bookingID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot sessionSnapshot: dataSnapshot.getChildren()) {
-                    Booking booking = sessionSnapshot.getValue(Booking.class);
+                Booking booking = dataSnapshot.getValue(Booking.class);
 
-                    database.getReference().child("sessions").addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot sDataSnapshot) {
-                            for (DataSnapshot sessionSnapshot: sDataSnapshot.getChildren()) {
-                                Session ssd = sessionSnapshot.getValue(Session.class);
-                                if(ssd.getBooking().getBookingID().equals(bookingID)) {
-
-                                    if(role.equals("DRIVER")) {
-                                        btnConfirm.setVisibility(View.VISIBLE);
-                                        paymentDriver.setVisibility(View.VISIBLE);
-                                        paymentPassenger.setVisibility(View.GONE);
-                                        name.setText(booking.getUser().getFullname());
-                                        paymentDriver.setText(booking.getFare()+"");
-                                    }
-                                    else {
-
-                                        passengerLayout.setVisibility(View.VISIBLE);
-                                        btnConfirm.setVisibility(View.VISIBLE);
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(DoneActivity.this);
-                                        builder.setTitle("Thank you for riding with us!");
-                                        builder.setMessage("Please give a feedback about your trip and your driver " + booking.getDriver().getFullname());
-                                        AlertDialog dialog = builder.create();
-                                        dialog.show();
-                                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                // Do something when the OK button is clicked
-                                                dialog.dismiss();
-                                            }
-                                        });
-                                        paymentPassenger.setText(booking.getFare()+"");
-                                        name.setText(booking.getDriver().getFullname());
-                                        plateNumber.setVisibility(View.VISIBLE);
-                                        plateNumber.setText(booking.getDriver().getDriver().getPlateNumber());
-                                    }
-                                    locationStart.setText(booking.getOriginText());
-                                    locationEnd.setText(booking.getDestinationText());
-                                    distanceDone.setText(booking.getDistance()+" KM");
-
-                                    btnConfirm.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            Intent intent;
-                                            if(role.equals("DRIVER")) {
-                                                Session ss = new Session(booking.getDriver(),booking,LocalDateTime.now().toString(),ssd.getDriverLocation(),true,true);
-                                                FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-                                                database.getReference().child("history")
-                                                        .child(booking.getBookingID()).setValue(
-                                                        new History(
-                                                                ss,
-                                                                Double.parseDouble(paymentDriver.getText().toString()),
-                                                                LocalDateTime.now().toString()
-                                                        )
-                                                );
-                                                FirebaseDatabase.getInstance().getReference("sessions").child(sessionSnapshot.getKey()).removeValue();
-                                                FirebaseDatabase.getInstance().getReference("bookings").child(bookingID).removeValue();
-                                                intent = new Intent(DoneActivity.this,DriverActivity.class);
-                                                finish();
-                                                startActivity(intent);
-                                            } else {
-                                                database.getReference("feedbacks")
-                                                        .child(booking.getBookingID())
-                                                        .child("feedback")
-                                                        .setValue(feedback.getText().toString());
-                                                database.getReference("feedbacks")
-                                                        .child(booking.getBookingID())
-                                                        .child("updatedAt")
-                                                        .setValue(LocalDateTime.now().toString());
-
-                                                FirebaseDatabase.getInstance().getReference("bookings").child(bookingID).removeValue();
-                                                intent = new Intent(DoneActivity.this,MainActivity.class);
-                                                finish();
-                                                startActivity(intent);
-                                            }
-                                        }
-                                    });
-                                    break;
-                                }
+                database.getReference().child("sessions").child(booking.getBookingID()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot sDataSnapshot) {
+                        if(sDataSnapshot.exists()) {
+                            Session ssd = sDataSnapshot.getValue(Session.class);
+                            if(role.equals("DRIVER")) {
+                                btnConfirm.setVisibility(View.VISIBLE);
+                                paymentDriver.setVisibility(View.VISIBLE);
+                                paymentPassenger.setVisibility(View.GONE);
+                                name.setText(booking.getUser().getFullname());
+                                paymentDriver.setText(booking.getFare()+"");
                             }
-                        }
+                            else {
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                passengerLayout.setVisibility(View.VISIBLE);
+                                btnConfirm.setVisibility(View.VISIBLE);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(DoneActivity.this);
+                                builder.setTitle("Thank you for riding with us!");
+                                builder.setMessage("Please give a feedback about your trip and your driver " + booking.getDriver().getFullname());
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
+                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // Do something when the OK button is clicked
+                                        dialog.dismiss();
+                                    }
+                                });
+                                paymentPassenger.setText(booking.getFare()+"");
+                                name.setText(booking.getDriver().getFullname());
+                                plateNumber.setVisibility(View.VISIBLE);
+                                plateNumber.setText(booking.getDriver().getDriver().getPlateNumber());
+                            }
+                            locationStart.setText(booking.getOriginText());
+                            locationEnd.setText(booking.getDestinationText());
+                            distanceDone.setText(booking.getDistance()+" KM");
 
+                            btnConfirm.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent;
+                                    if(role.equals("DRIVER")) {
+                                        Session ss = new Session(booking.getDriver(),booking,LocalDateTime.now().toString(),ssd.getDriverLocation(),true,true);
+                                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+                                        database.getReference().child("history")
+                                                .child(booking.getBookingID()).setValue(
+                                                new History(
+                                                        ss,
+                                                        Double.parseDouble(paymentDriver.getText().toString()),
+                                                        LocalDateTime.now().toString()
+                                                )
+                                        );
+                                        //FirebaseDatabase.getInstance().getReference("sessions").child(sessionSnapshot.getKey()).removeValue();
+                                        //FirebaseDatabase.getInstance().getReference("bookings").child(bookingID).removeValue();
+                                        intent = new Intent(DoneActivity.this,DriverActivity.class);
+                                        finish();
+                                        startActivity(intent);
+                                    } else {
+                                        Map<String, Object> feedbackUpdates = new HashMap<>();
+                                        feedbackUpdates.put("feedback", feedback.getText().toString());
+                                        feedbackUpdates.put("updatedAt", LocalDateTime.now().toString());
+
+                                        database.getReference("feedbacks").child(booking.getBookingID()).updateChildren(feedbackUpdates);
+
+                                        //FirebaseDatabase.getInstance().getReference("bookings").child(bookingID).removeValue();
+                                        intent = new Intent(DoneActivity.this,MainActivity.class);
+                                        finish();
+                                        startActivity(intent);
+                                    }
+                                }
+                            });
                         }
-                    });
-                }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
 
             @Override

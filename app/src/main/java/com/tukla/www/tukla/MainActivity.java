@@ -291,67 +291,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        DatabaseReference myBookingsRef = database.getReference().child("bookings");
-        myBookingsRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot bookingSnapshot : dataSnapshot.getChildren()){
-//                    Booking booking = bookingSnapshot.getValue(Booking.class);
-//                    if(booking.getIsAccepted()) {
-//                        Intent intent = new Intent( MainActivity.this, FindDriver.class );
-//                        startActivity( intent );
-//                    }
-                    if(bookingSnapshot.getKey().equals(recentBookingID)) {
-                        Booking booking = bookingSnapshot.getValue(Booking.class);
-                        myBookingObj = booking;
-                        if(booking.getIsAccepted() && !booking.getIsArrived()) {
-                            //book_button.setText(CODE_DRIVER_WAIT);
-                            book_button.setBackgroundColor(getColor(R.color.blue));
-                            Toast.makeText(getBaseContext(), "Driver accepted your booking, please wait", Toast.LENGTH_SHORT).show();
-
-                            database.getReference("sessions").addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    for(DataSnapshot sessionSnap : dataSnapshot.getChildren()){
-                                        Session sessionx = sessionSnap.getValue(Session.class);
-                                        if(!sessionx.isBookingEmpty())
-                                            if(sessionx.getBooking().getBookingID().equals(booking.getBookingID())) {
-                                                showCustomDialog(sessionx);
-                                                break;
-                                            }
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                }
-                            });
-                        } else if(booking.getIsAccepted() && booking.getIsArrived()) {
-                            //priceText.setText(0);
-                            //distanceText.setText(0);
-                            //mMap.clear();
-                            //txtDropOff.setText("");
-                            //book_button.setText(CODE_BOOK);
-                            //book_button.setBackgroundColor(getColor(R.color.green));
-                            Intent intent = new Intent( MainActivity.this, DoneActivity.class );
-
-                            intent.putExtra("BOOKING_ID", booking.getBookingID());
-                            intent.putExtra("ROLE","PASSENGER");
-                            //finish();
-                            startActivity( intent );
-                        }
-                        break;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
         DatabaseReference mySessionsRef = database.getReference().child("sessions");
         mySessionsRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -1112,8 +1051,59 @@ public class MainActivity extends AppCompatActivity
         isBookClicked = true;
         LatLngDefined l1 = new LatLngDefined(myPosition.latitude,myPosition.longitude);
         LatLngDefined l2 = new LatLngDefined(positionUpdate.latitude,positionUpdate.longitude);
-        myBookingObj = new Booking(recentBookingID,loggedInUser, null,LocalDateTime.now().toString(),l1,l2,false,false, paramFare, paramDistance,myCurrentloc.getText().toString(),txtDropOff.getText().toString(),txtMyNote);
+        myBookingObj = new Booking(recentBookingID,loggedInUser, null,LocalDateTime.now().toString(),l1,l2,false,false, paramFare, paramDistance,myCurrentloc.getText().toString(),txtDropOff.getText().toString(),txtMyNote,false);
         myBookingsRef.child(recentBookingID).setValue(myBookingObj);
+
+        myBookingsRef.child(recentBookingID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    Booking booking = dataSnapshot.getValue(Booking.class);
+                    myBookingObj = booking;
+                    if(booking.getIsAccepted() && !booking.getIsArrived()) {
+                        //book_button.setText(CODE_DRIVER_WAIT);
+                        book_button.setBackgroundColor(getColor(R.color.blue));
+                        Toast.makeText(getBaseContext(), "Driver accepted your booking, please wait", Toast.LENGTH_SHORT).show();
+
+                        database.getReference("sessions").child(booking.getBookingID()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                if(dataSnapshot.exists()) {
+                                    Session sessionx = dataSnapshot.getValue(Session.class);
+                                    if(!sessionx.isBookingEmpty()) {
+                                        showCustomDialog(sessionx);
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    } else if(booking.getIsAccepted() && booking.getIsArrived()) {
+                        //priceText.setText(0);
+                        //distanceText.setText(0);
+                        //mMap.clear();
+                        //txtDropOff.setText("");
+                        //book_button.setText(CODE_BOOK);
+                        //book_button.setBackgroundColor(getColor(R.color.green));
+                        Intent intent = new Intent( MainActivity.this, DoneActivity.class );
+
+                        intent.putExtra("BOOKING_ID", booking.getBookingID());
+                        intent.putExtra("ROLE","PASSENGER");
+                        finish();
+                        startActivity( intent );
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void showCustomDialog(Session mb) {

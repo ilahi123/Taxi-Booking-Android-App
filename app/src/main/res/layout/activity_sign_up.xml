@@ -9,104 +9,118 @@
     android:background="@drawable/side_nav_bar"
     android:orientation="vertical">
 
-        <TextView
-            android:textAlignment="center"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="26dp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:text="SIGN UP"
-            android:layout_marginBottom="10dp"/>
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/image_view"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:scaleType="centerCrop"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_menu_camera" />
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Upload your ID"
-            android:textColor="#ffffff"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:typeface="sans"
-            android:gravity="center" />
+                       <TextView
+                           android:textAlignment="center"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:textSize="26dp"
+                           android:textStyle="bold"
+                           android:textColor="@color/white"
+                           android:text="SIGN UP"
+                           android:layout_marginBottom="10dp"/>
 
-        <EditText
-            android:layout_gravity="center"
-            android:id="@+id/eFullName"
-            android:hint="Full Name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="3" />
+                       <ImageView
+                           android:id="@+id/image_view"
+                           android:layout_width="80dp"
+                           android:layout_height="80dp"
+                           android:scaleType="centerCrop"
+                           android:layout_gravity="center"
+                           android:src="@drawable/ic_menu_camera" />
 
-        <EditText
-            android:hint="Address"
-            android:layout_gravity="center"
-            android:id="@+id/eAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="3" />
+                       <TextView
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:text="Upload Profile Picture"
+                           android:textColor="#ffffff"
+                           android:textSize="18sp"
+                           android:textStyle="bold"
+                           android:typeface="sans"
+                           android:gravity="center" />
 
-        <EditText
-            android:hint="Phone Number"
-            android:layout_gravity="center"
-            android:id="@+id/ePhoneNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="3" />
+                       <EditText
+                           android:layout_gravity="center"
+                           android:id="@+id/eFullName"
+                           android:hint="Full Name"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           />
 
-        <EditText
-            android:hint="Email"
-            android:layout_gravity="center"
-            android:id="@+id/eEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="3" />
+                       <EditText
+                           android:hint="Address"
+                           android:layout_gravity="center"
+                           android:id="@+id/eAddress"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           />
 
-        <EditText
-            android:hint="Password"
-            android:layout_gravity="center"
-            android:id="@+id/mpassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:inputType="textPassword" />
-        <CheckBox
-            android:id="@+id/show_hide_checkbox_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Show/Hide password"
-            android:textSize="10sp" />
+                       <EditText
+                           android:hint="Phone Number"
+                           android:layout_gravity="center"
+                           android:id="@+id/ePhoneNumber"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           />
 
-        <EditText
-            android:hint="Confirm Password"
-            android:layout_gravity="center"
-            android:id="@+id/mConfirmPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:inputType="textPassword" />
-        <CheckBox
-            android:id="@+id/show_hide_checkbox_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Show/Hide password"
-            android:textSize="10sp" />
+                       <EditText
+                           android:hint="Email"
+                           android:layout_gravity="center"
+                           android:id="@+id/eEmail"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           />
 
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/blue"
+                       <EditText
+                           android:hint="Password"
+                           android:layout_gravity="center"
+                           android:id="@+id/mpassword"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
 
-            android:text="SignUP"
-            android:textColor="#ffffff"
-            android:textSize="18dp"
-            android:textStyle="bold" />
-    </LinearLayout>
+                           android:inputType="textPassword" />
+                       <CheckBox
+                           android:id="@+id/show_hide_checkbox_1"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:text="Show/Hide password"
+                           android:textSize="10sp" />
+
+                       <EditText
+                           android:hint="Confirm Password"
+                           android:layout_gravity="center"
+                           android:id="@+id/mConfirmPassword"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+
+                           android:inputType="textPassword" />
+                       <CheckBox
+                           android:id="@+id/show_hide_checkbox_2"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:text="Show/Hide password"
+                           android:textSize="10sp" />
+
+                       <Button
+                           android:id="@+id/button2"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:background="@color/blue"
+
+                           android:text="SignUP"
+                           android:textColor="#ffffff"
+                           android:textSize="18dp"
+                           android:textStyle="bold" />
+
+               </LinearLayout>
+
+        </ScrollView>
+
+</LinearLayout>

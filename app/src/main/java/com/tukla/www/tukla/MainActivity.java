@@ -255,7 +255,7 @@ public class MainActivity extends AppCompatActivity
                             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CALL_PHONE}, 123);
                         } else {
                             // App has permission, make phone call
-                            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "+63495451698"));
+                            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "+639322206783"));
                             startActivity(intent);
                         }
                     }

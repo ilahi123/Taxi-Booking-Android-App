@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.LinearLayoutCompat
+        <LinearLayout
             android:background="@color/white"
             android:layout_margin="10dp"
             android:padding="25dp"
@@ -60,7 +60,6 @@
                 android:gravity="center" />
 
             <EditText
-                android:layout_weight="3"
                 android:hint="Full Name"
                 android:id="@+id/eFullName"
                 android:layout_width="match_parent"
@@ -135,8 +134,7 @@
                 android:padding="10dp"
                 android:layout_gravity="center"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="25"
+                android:layout_height="125dp"
                 android:src="@drawable/upload_id" />
 
             <android.support.v7.widget.LinearLayoutCompat
@@ -170,7 +168,7 @@
                     android:textStyle="bold" />
             </android.support.v7.widget.LinearLayoutCompat>
 
-        </android.support.v7.widget.LinearLayoutCompat>
+        </LinearLayout>
     </ScrollView>
 
 </LinearLayout>

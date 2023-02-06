@@ -95,7 +95,7 @@ public class DoneActivity extends AppCompatActivity implements Serializable {
                                 public void onClick(View v) {
                                     Intent intent;
                                     if(role.equals("DRIVER")) {
-                                        Session ss = new Session(booking.getDriver(),booking,LocalDateTime.now().toString(),ssd.getDriverLocation(),true,true);
+                                        Session ss = new Session(booking.getDriver(),booking,LocalDateTime.now().toString(),ssd.getDriverLocation(),true,true,false);
                                         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
                                         database.getReference().child("history")

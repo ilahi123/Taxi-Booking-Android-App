@@ -13,18 +13,20 @@ public class Session {
     private LatLngDefined driverLocation;
     private Boolean isDriverArrived;
     private Boolean isDone;
+    private Boolean isCancelled;
 
     public Session() {
 
     }
 
-    public Session(User driver, Booking booking, String startedAt, LatLngDefined driverLocation, Boolean isDriverArrived, Boolean isDone) {
+    public Session(User driver, Booking booking, String startedAt, LatLngDefined driverLocation, Boolean isDriverArrived, Boolean isDone, Boolean isCancelled) {
         this.driver = driver;
         this.booking = booking;
         this.startedAt = startedAt;
         this.driverLocation = driverLocation;
         this.isDriverArrived = isDriverArrived;
         this.isDone = isDone;
+        this.isCancelled = isCancelled;
     }
 
     public User getDriver() {
@@ -57,5 +59,9 @@ public class Session {
 
     public boolean isBookingEmpty() {
         return  booking == null;
+    }
+
+    public boolean getIsCancelled() {
+        return isCancelled;
     }
 }

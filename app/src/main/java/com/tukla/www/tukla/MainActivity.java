@@ -158,6 +158,7 @@ public class MainActivity extends AppCompatActivity
     );
     private Boolean isMapClick;
     private String txtMyNote;
+    private Boolean isCancelled = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setupLocationManager();
@@ -236,6 +237,7 @@ public class MainActivity extends AppCompatActivity
                         }
                     } else if(book_button.getText().toString().equals(CODE_CANCEL)){
                         //driver_info.setVisibility(View.GONE);
+                        isCancelled = false;
                         isBookClicked = false;
                         mMap.clear();
                         book_button.setText(CODE_BOOK);
@@ -1051,7 +1053,7 @@ public class MainActivity extends AppCompatActivity
         isBookClicked = true;
         LatLngDefined l1 = new LatLngDefined(myPosition.latitude,myPosition.longitude);
         LatLngDefined l2 = new LatLngDefined(positionUpdate.latitude,positionUpdate.longitude);
-        myBookingObj = new Booking(recentBookingID,loggedInUser, null,LocalDateTime.now().toString(),l1,l2,false,false, paramFare, paramDistance,myCurrentloc.getText().toString(),txtDropOff.getText().toString(),txtMyNote,false);
+        myBookingObj = new Booking(recentBookingID,loggedInUser, null,LocalDateTime.now().toString(),l1,l2,false,false, paramFare, paramDistance,myCurrentloc.getText().toString(),txtDropOff.getText().toString(),txtMyNote,false,false);
         myBookingsRef.child(recentBookingID).setValue(myBookingObj);
 
         myBookingsRef.child(recentBookingID).addValueEventListener(new ValueEventListener() {
@@ -1060,8 +1062,25 @@ public class MainActivity extends AppCompatActivity
                 if(dataSnapshot.exists()) {
                     Booking booking = dataSnapshot.getValue(Booking.class);
                     myBookingObj = booking;
-                    if(booking.getIsAccepted() && !booking.getIsArrived()) {
+                    if(booking.getIsCancelled() && !isCancelled) {
+                        isCancelled = true;
+                        Toast.makeText(getBaseContext(), "Driver cancelled your booking, please book again.", Toast.LENGTH_SHORT).show();
+                        //isBookClicked = false;
+                        //mMap.clear();
+                        book_button.setText(CODE_CANCEL);
+                        book_button.setBackgroundColor(getColor(R.color.colorRed));
+                        driverMarker.remove();
+                        //txtDropOff.setEnabled(true);
+                        //txtDropOff.setText("");
+                        //priceText.setText("0.00");
+                        //distanceText.setText("0");
+
+                        CameraUpdate update = CameraUpdateFactory.newLatLngZoom( positionUpdate, 15 );
+                        mMap.animateCamera(update);
+
+                    } else if(booking.getIsAccepted() && !booking.getIsArrived()) {
                         //book_button.setText(CODE_DRIVER_WAIT);
+                        isCancelled = false;
                         book_button.setBackgroundColor(getColor(R.color.blue));
                         Toast.makeText(getBaseContext(), "Driver accepted your booking, please wait", Toast.LENGTH_SHORT).show();
 

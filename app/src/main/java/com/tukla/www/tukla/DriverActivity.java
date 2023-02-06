@@ -201,19 +201,17 @@ public class DriverActivity extends AppCompatActivity
                     mMap.clear();
                     layoutDetails.setVisibility(View.GONE);
 
-//                    if(!sessionID.equals(null)) {
-                        DatabaseReference sessionsRef = database.getReference("sessions");
-                        sessionsRef.child(sessionID).removeValue();
+                    DatabaseReference sessionsRef = database.getReference("sessions");
+                    sessionsRef.child(sessionID).child("isCancelled").setValue(true);
 
-//                        HashMap<String, Object> driverUpdates =  new HashMap();
-//                        driverUpdates.put("isArrived",false);
-//                        driverUpdates.put("isAccepted",false);
-//                        driverUpdates.put("driver",  null);
-//                        database.getReference("bookings").child(clickedBookingID).updateChildren(driverUpdates);
-                        database.getReference("bookings").child(clickedBookingID).removeValue();
-                        clickedBookingID = null;
-                        isAccepted=false;
-//                    }
+                    HashMap<String, Object> driverUpdates =  new HashMap();
+                    driverUpdates.put("isClicked", false);
+                    driverUpdates.put("isAccepted", false);
+                    driverUpdates.put("isCancelled",true);
+                    database.getReference("bookings").child(clickedBookingID).updateChildren(driverUpdates);
+                    clickedBookingID = null;
+                    isAccepted=false;
+
                     addBookingsMarkers();
 
                     LatLng positionUpdate = new LatLng( DriverActivity.this.latitude,DriverActivity.this.longitude );
@@ -249,36 +247,6 @@ public class DriverActivity extends AppCompatActivity
 //            }
 //        });
 
-        DatabaseReference sessionRef = database.getReference("sessions");
-        sessionRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
-                    Session mySession = sessionSnapshot.getValue(Session.class);
-                    if(!mySession.isBookingEmpty())
-                        if(mySession.getBooking().getBookingID().equals(clickedBookingID)) {
-                            thisSession = mySession;
-                            if(mySession.getIsDriverArrived()) {
-                                targetDestination = new LatLng(
-                                        mySession.getBooking().getDestination().getLatitude(),
-                                        mySession.getBooking().getDestination().getLongitude()
-                                );
-                                mMap.clear();
-                                addMarker(targetDestination, mySession.getBooking(),2);
-                                book_button.setText(CODE_DONE);
-                                book_button.setBackgroundColor(getColor(R.color.green));
-                                book_button.setVisibility(View.VISIBLE);
-                                break;
-                            }
-                        }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
 
         database.getReference().child("users").addValueEventListener(new ValueEventListener() {
             @Override
@@ -688,7 +656,7 @@ public class DriverActivity extends AppCompatActivity
                 HashMap<String, Object> bookingUpdates = new HashMap<>();
                 bookingUpdates.put("isAccepted",true);
                 bookingUpdates.put("driver",loggedInDriverObj);
-                //bookingsRef.child(clickedBookingID).child("isAccepted").setValue(true);
+                bookingUpdates.put("isCancelled", false);
                 //bookingsRef.child(clickedBookingID).child("driver").setValue(loggedInDriverObj);
                 //bookingsRef.child(clickedBookingID).child("driverLocation").setValue(new LatLngDefined(DriverActivity.this.latitude,DriverActivity.this.longitude));
                 bookingsRef.updateChildren(bookingUpdates);
@@ -701,6 +669,7 @@ public class DriverActivity extends AppCompatActivity
                         mb,
                         LocalDateTime.now().toString(),
                         myLocNow,
+                        false,
                         false,
                         false
                 );
@@ -731,6 +700,37 @@ public class DriverActivity extends AppCompatActivity
                         sessionObj.getBooking().getOrigin().getLatitude(),
                         sessionObj.getBooking().getOrigin().getLongitude()
                 );
+
+                DatabaseReference sessionRef = database.getReference().child("sessions").child(sessionID);
+                sessionRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot sessionSnapshot) {
+
+                        if(sessionSnapshot.exists()) {
+                            Session mySession = sessionSnapshot.getValue(Session.class);
+                            if(!mySession.isBookingEmpty())
+                                if(mySession.getBooking().getBookingID().equals(clickedBookingID)) {
+                                    thisSession = mySession;
+                                    if(mySession.getIsDriverArrived()) {
+                                        targetDestination = new LatLng(
+                                                mySession.getBooking().getDestination().getLatitude(),
+                                                mySession.getBooking().getDestination().getLongitude()
+                                        );
+                                        mMap.clear();
+                                        addMarker(targetDestination, mySession.getBooking(),2);
+                                        book_button.setText(CODE_DONE);
+                                        book_button.setBackgroundColor(getColor(R.color.green));
+                                        book_button.setVisibility(View.VISIBLE);
+                                    }
+                                }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
                 dialog.dismiss();
             }
@@ -1183,20 +1183,23 @@ public class DriverActivity extends AppCompatActivity
                     bookingMarkers.clear();
                     hashMapBookings.clear();
                     for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
-                        String key = childSnapshot.getKey();
-                        Booking booking = childSnapshot.getValue(Booking.class);
+                        if(childSnapshot.exists()) {
+                            String key = childSnapshot.getKey();
+                            Booking booking = childSnapshot.getValue(Booking.class);
 
-                        if(!booking.equals(null) && !booking.getIsAccepted() && !booking.getIsClicked()) {
-                            hashMapBookings.put(key, booking);
-                            Marker bm = addMarker(
-                                    new LatLng(
-                                            booking.getOrigin().getLatitude(),
-                                            booking.getOrigin().getLongitude()
-                                    ), booking, 1
-                            );
-                            bm.setTag(booking);
-                            bookingMarkers.add(bm);
+                            if(!booking.getIsAccepted() && !booking.getIsClicked()) {
+                                hashMapBookings.put(key, booking);
+                                Marker bm = addMarker(
+                                        new LatLng(
+                                                booking.getOrigin().getLatitude(),
+                                                booking.getOrigin().getLongitude()
+                                        ), booking, 1
+                                );
+                                bm.setTag(booking);
+                                bookingMarkers.add(bm);
+                            }
                         }
+
                     }
                 }
             }
